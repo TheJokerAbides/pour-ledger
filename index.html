@@ -355,7 +355,7 @@
   </div>
 
   <div class="stats">
-    <div class="stat"><span class="num" id="stat-total">&mdash;</span><span class="label">Total bottles</span></div>
+    <div class="stat"><span class="num" id="stat-total">&mdash;</span><span class="label">Bottles shown</span></div>
     <div class="stat"><span class="num" id="stat-pending">&mdash;</span><span class="label">In the cellar</span></div>
     <div class="stat"><span class="num" id="stat-complete">&mdash;</span><span class="label">Uncorked</span></div>
     <div class="stat"><span class="num" id="stat-avgrating">&mdash;</span><span class="label">Avg. rating</span></div>
@@ -599,10 +599,10 @@ function filteredSorted() {
 function render() {
   refreshFilterOptions();
   const list = filteredSorted();
-  const total = wines.length;
-  const pending = wines.filter(w => (w.Status || "Pending") === "Pending").length;
-  const complete = wines.filter(w => w.Status === "Complete").length;
-  const rated = wines.map(w => Number(w.MyRating)).filter(n => !isNaN(n) && n > 0);
+  const total = list.length;
+  const pending = list.filter(w => (w.Status || "Pending") === "Pending").length;
+  const complete = list.filter(w => w.Status === "Complete").length;
+  const rated = list.map(w => Number(w.MyRating)).filter(n => !isNaN(n) && n > 0);
   const avgRating = rated.length ? Math.round(rated.reduce((a,b)=>a+b,0) / rated.length) : "\u2014";
 
   document.getElementById("stat-total").textContent = total.toLocaleString();
@@ -610,7 +610,9 @@ function render() {
   document.getElementById("stat-complete").textContent = complete.toLocaleString();
   document.getElementById("stat-avgrating").textContent = avgRating;
   document.getElementById("bottle-count-sub").textContent =
-    total ? `${total.toLocaleString()} bottles logged, ${pending.toLocaleString()} still cellared` : "No bottles logged yet";
+    total === wines.length
+      ? (total ? `${total.toLocaleString()} bottles logged, ${pending.toLocaleString()} still cellared` : "No bottles logged yet")
+      : `${total.toLocaleString()} of ${wines.length.toLocaleString()} bottles shown, ${pending.toLocaleString()} still cellared`;
 
   const tbody = document.getElementById("wine-tbody");
   const emptyState = document.getElementById("empty-state");
