@@ -1,709 +1,713 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Pour Ledger</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --wood-dark:#2A1B10;
-    --wood-mid:#4A2F19;
-    --wood-line:rgba(255,255,255,0.035);
-    --surface:#FBF8F2;
-    --surface-2:#F3ECDC;
-    --surface-3:#EBE1CA;
-    --ink:#2B2118;
-    --ink-soft:#7A6C55;
-    --wine:#7A2331;
-    --wine-deep:#591620;
-    --brass:#9C7A34;
-    --brass-light:#D9BA72;
-    --cream:#F3ECDC;
-    --success:#3F6B4A;
-    --success-bg:#E4EDE1;
-    --pending:#93641D;
-    --pending-bg:#F1E3C4;
-    --danger:#8C2F2F;
-    --border:#E4D9C2;
-    --border-strong:#D3C4A2;
-    --radius:0.5rem;
-    --shadow-sm:0 1px 2px rgba(42,27,16,0.09);
-    --shadow-md:0 6px 20px -4px rgba(42,27,16,0.18), 0 2px 6px rgba(42,27,16,0.08);
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background-color:var(--wood-dark);
-    background-image:
-      repeating-linear-gradient(90deg, var(--wood-line) 0px, var(--wood-line) 1px, transparent 1px, transparent 5px),
-      linear-gradient(165deg, var(--wood-mid) 0%, var(--wood-dark) 55%),
-      radial-gradient(ellipse 900px 400px at 50% 0%, rgba(217,186,114,0.10), transparent 70%);
-    color:var(--ink);
-    font-family:'Public Sans', sans-serif;
-    font-size:15px;
-    line-height:1.55;
-    min-height:100vh;
-  }
-  .wrap{max-width:1180px;margin:0 auto;padding:0 1.5rem 4rem;}
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Pour Ledger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+      :root{
+            --void:#09090A;
+            --slat-a:#0D0D0F;
+            --slat-b:#1B1B1E;
+            --hairline:rgba(255,255,255,0.05);
+            --surface:#F6F6F5;
+            --surface-2:#ECECEA;
+            --surface-3:#E0E0DD;
+            --ink:#18181A;
+            --ink-soft:#6B6B70;
+            --graphite:#1F1F22;
+            --graphite-deep:#0E0E10;
+            --silver:#9B9CA2;
+            --silver-light:#E4E4E6;
+            --success:#3E6A54;
+            --success-bg:#E6ECE8;
+            --pending:#6E6247;
+            --pending-bg:#EEEAE0;
+            --danger:#7C3333;
+            --border:#DBDBD8;
+            --border-strong:#C6C6C2;
+            --radius:0.5rem;
+            --shadow-sm:0 1px 2px rgba(0,0,0,0.10);
+            --shadow-md:0 14px 34px -10px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.18);
+      }
+      *{box-sizing:border-box;}
+      body{
+            margin:0;
+            background-color:var(--void);
+            background-image:
+                    repeating-linear-gradient(128deg, var(--hairline) 0px, var(--hairline) 1px, transparent 1px, transparent 3px),
+                    repeating-linear-gradient(128deg, var(--slat-b) 0px, var(--slat-b) 22px, var(--slat-a) 22px, var(--slat-a) 46px),
+                    radial-gradient(ellipse 1100px 520px at 50% 0%, rgba(255,255,255,0.05), transparent 72%);
+            color:var(--ink);
+            font-family:'Inter', sans-serif;
+            font-size:15px;
+            line-height:1.55;
+            min-height:100vh;
+      }
+      .wrap{max-width:1180px;margin:0 auto;padding:0 1.5rem 4rem;}
 
-  header.navbar{
-    background:linear-gradient(180deg, rgba(0,0,0,0.12), transparent);
-    border-bottom:1px solid rgba(217,186,114,0.28);
-    margin-bottom:2rem;
-    padding:1.1rem 0;
+      header.navbar{
+            background:linear-gradient(180deg, rgba(0,0,0,0.22), transparent);
+            border-bottom:1px solid rgba(255,255,255,0.09);
+            margin-bottom:2rem;
+            padding:1.2rem 0;
+      }
+      .navbar-inner{
+            max-width:1180px;margin:0 auto;padding:0 1.5rem;
+            display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+      }
+      .brand{ display:flex; align-items:center; gap:0.7rem; }
+      .brand svg{ width:22px; height:22px; flex-shrink:0; }
+      .wordmark{
+            display:flex;
+            align-items:baseline;
+            gap:0.6rem;
+            margin:0;
+      }
+      .wm-eyebrow{
+            font-family:'Inter', sans-serif;
+            font-weight:600;
+            font-size:0.78rem;
+            letter-spacing:0.34em;
+            color:var(--silver);
+      }
+      .wm-rule{ width:1px; height:13px; background:var(--border-strong); opacity:0.35; display:inline-block; }
+      .wm-serif{
+            font-family:'Bodoni Moda', serif;
+            font-style:italic;
+            font-weight:500;
+            font-optical-sizing:auto;
+            font-size:1.7rem;
+            letter-spacing:0.005em;
+            color:var(--silver-light);
+      }
+      .subhead{ font-size:13px; color:#9C9CA1; margin:0; }
+
+      #config-banner{
+            background:var(--graphite-deep);
+            border:1px solid var(--border-strong);
+            color:var(--silver-light);
+            border-radius:var(--radius);
+            padding:0.9rem 1.1rem;
+            font-size:13.5px;
+            margin-bottom:1.5rem;
+            line-height:1.55;
+            display:none;
+      }
+      #config-banner code{background:rgba(255,255,255,0.08); padding:1px 5px; border-radius:3px; font-family:'IBM Plex Mono', monospace;}
+
+      .stats{
+            display:grid;
+            grid-template-columns:repeat(4, 1fr);
+            gap:0.85rem;
+            margin-bottom:1.5rem;
+      }
+      .stat{
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            box-shadow:var(--shadow-sm);
+            padding:0.9rem 1.1rem;
+      }
+      .stat .num{ font-family:'IBM Plex Mono', monospace; font-size:1.55rem; font-weight:500; color:var(--graphite); display:block; line-height:1.2; }
+      .stat .label{ font-size:11.5px; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink-soft); }
+
+      .panel{
+            background:var(--surface);
+            border-radius:0.75rem;
+            border:1px solid var(--border);
+            box-shadow:var(--shadow-md);
+            overflow:hidden;
+      }
+      .panel-header{
+            padding:1.1rem 1.25rem;
+            border-bottom:1px solid var(--border);
+            background:var(--surface-2);
+      }
+      .panel-body{ padding:0.25rem 1.25rem 0.5rem; }
+
+      .toolbar{
+            display:flex;
+            flex-wrap:wrap;
+            gap:0.6rem;
+            align-items:center;
+      }
+      .toolbar input[type=search]{
+            flex:1 1 220px;
+            min-width:180px;
+            padding:0.55rem 0.8rem;
+            border:1px solid var(--border-strong);
+            border-radius:var(--radius);
+            background:#fff;
+            font-size:14px;
+            color:var(--ink);
+            font-family:'Inter', sans-serif;
+      }
+      .toolbar input[type=search]:focus{ outline:none; border-color:var(--ink); box-shadow:0 0 0 3px rgba(24,24,26,0.10); }
+      .chip-group{
+            display:flex;
+            border:1px solid var(--border-strong);
+            border-radius:var(--radius);
+            overflow:hidden;
+      }
+      .chip{
+            font-family:'Inter', sans-serif;
+            font-weight:500;
+            font-size:12.5px;
+            padding:0.5rem 0.85rem;
+            border:none;
+            border-right:1px solid var(--border-strong);
+            background:#fff;
+            color:var(--ink-soft);
+            cursor:pointer;
+            user-select:none;
+      }
+      .chip:last-child{ border-right:none; }
+      .chip.active{ background:var(--graphite); color:#fff; }
+      select.sortsel{
+            padding:0.55rem 0.6rem;
+            border:1px solid var(--border-strong);
+            border-radius:var(--radius);
+            background:#fff;
+            font-size:13px;
+            color:var(--ink);
+            font-family:'Inter', sans-serif;
+      }
+      .btn{
+            font-family:'Inter', sans-serif;
+            font-weight:600;
+            font-size:13.5px;
+            padding:0.55rem 1.05rem;
+            border-radius:var(--radius);
+            border:1px solid var(--graphite);
+            background:var(--graphite);
+            color:#fff;
+            cursor:pointer;
+            box-shadow:var(--shadow-sm);
+      }
+      .btn:hover{ background:var(--graphite-deep); border-color:var(--graphite-deep); }
+      .btn.ghost{ background:#fff; color:var(--ink-soft); border-color:var(--border-strong); box-shadow:none; }
+      .btn.ghost:hover{ background:var(--surface-2); color:var(--ink); }
+      .btn.small{ padding:0.3rem 0.6rem; font-size:12px; }
+      .btn.danger{ border-color:var(--danger); background:var(--danger); }
+      .btn.danger:hover{ background:#5E2626; border-color:#5E2626; }
+
+      table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+      thead th{
+            text-align:left;
+            font-family:'Inter', sans-serif;
+            font-size:11.5px;
+            font-weight:600;
+            letter-spacing:0.04em;
+            text-transform:uppercase;
+            color:var(--ink-soft);
+            background:var(--surface-2);
+            border-bottom:1px solid var(--border);
+            padding:0.7rem 0.75rem;
+            cursor:pointer;
+            white-space:nowrap;
+      }
+      thead th.active{ color:var(--ink); }
+      tbody tr{ border-bottom:1px solid var(--border); cursor:pointer; }
+      tbody tr:nth-child(even){ background:rgba(224,224,221,0.35); }
+      tbody tr:hover{ background:var(--surface-3); }
+      tbody td{ padding:0.65rem 0.75rem; vertical-align:middle; }
+      td.num{ font-family:'IBM Plex Mono', monospace; }
+      .wine-name{ font-family:'Bodoni Moda', serif; font-weight:600; font-size:14.5px; }
+      .wine-sub{ color:var(--ink-soft); font-size:12px; }
+      .vintage-chip{
+            display:inline-block;
+            font-family:'IBM Plex Mono', monospace;
+            font-size:11.5px;
+            background:var(--surface-3);
+            border:1px solid var(--border-strong);
+            border-radius:4px;
+            padding:1px 7px;
+      }
+      .seal{
+            display:inline-flex;
+            align-items:center;
+            gap:5px;
+            font-family:'Inter', sans-serif;
+            font-weight:600;
+            font-size:11px;
+            letter-spacing:0.02em;
+            padding:3px 9px 3px 7px;
+            border-radius:999px;
+      }
+      .seal::before{ content:''; width:6px; height:6px; border-radius:50%; display:inline-block; }
+      .seal.complete{ background:var(--success-bg); color:var(--success); }
+      .seal.complete::before{ background:var(--success); }
+      .seal.pending{ background:var(--pending-bg); color:var(--pending); }
+      .seal.pending::before{ background:var(--pending); }
+
+      .rowactions{ display:flex; gap:6px; opacity:0; transition:opacity 0.1s; }
+      tbody tr:hover .rowactions{ opacity:1; }
+      .iconbtn{
+          dius:var(--radius);
+            font-family:'Inter', sans-serif; font-size:13.5px; background:#fff; color:var(--ink);
+      }
+      .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--ink); box-shadow:0 0 0 3px rgba(24,24,26,0.10); }
+      .field textarea{ resize:vertical; min-height:56px; }
+      .modal-actions{ display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.3rem; }
+      .modal-close{ position:absolute; top:1.1rem; right:1.2rem; background:none; border:none; font-size:1.3rem; color:var(--ink-soft); cursor:pointer; }
+      .modal-wrap{ position:relative; }
+
+      .confirm{ text-align:center; }
+      .confirm p{ margin:0.8rem 0 1.3rem; color:var(--ink-soft); font-size:14px; }
+
+      .site-footer{
+            text-align:center;
+            font-family:'Bodoni Moda', serif;
+            font-style:italic;
+            font-weight:500;
+            font-size:0.95rem;
+            letter-spacing:0.01em;
+            color:var(--silver);
+            padding:0.5rem 1.5rem 2.5rem;
+      }
+
+      @media (max-width: 640px){
+            .stats{ grid-template-columns:repeat(2, 1fr); }
+            .form-grid{ grid-template-columns:1fr; }
+            table, thead, tbody, tr, th, td { display:block; }
+            thead{ display:none; }
+            tbody tr{ padding:0.6rem 0; border-bottom:1px solid var(--border); }
+            tbody td{ padding:0.15rem 0.75rem; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header class="navbar">
+        <div class="navbar-inner">
+              <div class="brand">
+                      <svg viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                            <linearGradient id="markGrad" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+                                                          <stop offset="0" stop-color="#EDEDEF"/>
+                                                          <stop offset="1" stop-color="#88888E"/>
+                                            </linearGradient>linearGradient>
+                                </defs>
+                                <path d="M7 3h10l-1 7a4 4 0 0 1-8 0L7 3z" stroke="url(#markGrad)" stroke-width="1.1"/>
+                                <path d="M12 14v6M9 20h6" stroke="url(#markGrad)" stroke-width="1.1"/>
+                      </svg>svg>
+                      <h1 class="wordmark"><span class="wm-eyebrow">POUR</span>span><span class="wm-rule"></span>span><span class="wm-serif">Ledger</span>span></h1>h1>
+              </div>div>
+              <p class="subhead" id="bottle-count-sub">Loading your collection&hellip;</p>p>
+        </div>div>
+    </header>header>
+
+    <div class="wrap">
+        <div id="config-banner">
+              <strong>Firebase isn't connected yet.</strong> Open this file in a text editor, find the
+            <code>firebaseConfig</code> object near the bottom of the file, and paste in your project's
+            web app config from the Firebase console. Until then this is showing an empty demo state &mdash;
+            nothing you add will be saved.
+        </div>div>
+    
+      <div class="stats">
+          <div class="stat"><span class="num" id="stat-total">&mdash;</span>span><span class="label">Total bottles</span>span></div>div>
+          <div class="stat"><span class="num" id="stat-pending">&mdash;</span>span><span class="label">In the cellar</span>span></div>div>
+          <div class="stat"><span class="num" id="stat-complete">&mdash;</span>span><span class="label">Uncorked</span>span></div>div>
+          <div class="stat"><span class="num" id="stat-avgrating">&mdash;</span>span><span class="label">Avg. rating</span>span></div>div>
+      </div>div>
+    
+      <div class="panel">
+          <div class="panel-header">
+                <div class="toolbar">
+                        <input type="search" id="search" placeholder="Search producer, type, region, vineyard, notes&hellip;">
+                        <div class="chip-group" id="status-filters">
+                                  <span class="chip active" data-status="All">All</span>span>
+                                  <span class="chip" data-status="Pending">Cellared</span>span>
+                                  <span class="chip" data-status="Complete">Uncorked</span>span>
+                        </div>div>
+                        <select class="sortsel" id="sort-select">
+                                  <option value="DatePurchased-desc">Newest purchase</option>option>
+                                  <option value="DatePurchased-asc">Oldest purchase</option>option>
+                                  <option value="Vintage-desc">Vintage (new&rarr;old)</option>option>
+                                  <option value="Vintage-asc">Vintage (old&rarr;new)</option>option>
+                                  <option value="Producer-asc">Producer A&ndash;Z</option>option>
+                                  <option value="Price-desc">Price (high&rarr;low)</option>option>
+                                  <option value="MyRating-desc">My rating (high&rarr;low)</option>option>
+                        </select>select>
+                        <button class="btn" id="add-btn">+ Add bottle</button>button>
+                </div>div>
+          </div>div>
+      
+          <div class="panel-body">
+                <div id="table-region">
+                        <table id="wine-table">
+                                  <thead>
+                                                <tr>
+                                                                <th>Bottle</th>
+                                                <th>Vintage</th>
+                                                <th>Region</th>
+                                                <th>Price</th>
+                                                <th>My rating</th>
+                                                <th>Status</th>
+                                                <th></th>
+                                                </tr>
+                                  </thead>
+                                  <tbody id="wine-tbody"></tbody>tbody>
+                        </table>table>
+                        <div class="empty" id="empty-state" style="display:none;">
+                                  <p class="big">No bottles match this search.</p>p>
+                                  <p>Try clearing the filters, or add a new bottle to start the ledger.</p>
+                        </div>div>
+                </div>div>
+          </div>div>
+      
+          <div class="pager">
+                <span id="pager-label">&nbsp;</span>span>
+                <span>
+                          <button id="prev-page">&larr; Prev</button>button>
+                          &nbsp;&nbsp;
+                          <button id="next-page">Next &rarr;</button>button>
+                </span>
+          </div>div>
+      </div>div>
+    </div>div>
+
+    <div class="overlay" id="form-overlay">
+        <div class="modal modal-wrap">
+              <button class="modal-close" id="form-close" aria-label="Close">&times;</button>button>
+              <div class="modal-head"><h2 id="form-title">Add bottle</h2>h2></div>div>
+              <div class="modal-body">
+                    <form id="wine-form">
+                            <div class="form-grid">
+                                      <div class="field"><label>Producer</label><input name="Producer" placeholder="e.g. Sequoia Grove"></div>div>
+                                    <div class="field"><label>Vineyard</label><input name="Vineyard"></div>div>
+                                    <div class="field"><label>Type / varietal</label><input name="Type" placeholder="e.g. Cabernet Sauvignon"></div>div>
+                                    <div class="field"><label>Region</label><input name="Region"></div>div>
+                                    <div class="field"><label>Vintage</label><input name="Vintage" type="number" min="1900" max="2100"></div>div>
+                                    <div class="field"><label>Status</label>
+                                              <select name="Status">
+                                                          <option value="Pending">Cellared (pending)</option>option>
+                                                          <option value="Complete">Uncorked (complete)</option>option>
+                                              </select>select>
+                                    </div>div>
+                                    <div class="field"><label>Date purchased</label><input name="DatePurchased" type="date"></div>div>
+                                    <div class="field"><label>Place purchased</label><input name="PlacePurchased"></div>div>
+                                    <div class="field"><label>Price ($)</label><input name="Price" type="number" step="0.01" min="0"></div>div>
+                                    <div class="field"><label>Recommended by</label><input name="RecommendedBy"></div>div>
+                                    <div class="field"><label>Date consumed</label><input name="DateConsumed" type="date"></div>div>
+                                    <div class="field"><label>My rating (0&ndash;100)</label><input name="MyRating" type="number" min="0" max="100"></div>div>
+                                    <div class="field"><label>Drink window &mdash; start</label><input name="DrinkStart"></div>div>
+                                    <div class="field"><label>Drink window &mdash; finish</label><input name="DrinkFinish"></div>div>
+                                    <div class="field"><label>Robert Parker score</label><input name="RobertParker"></div>div>
+                                    <div class="field"><label>Wine Spectator score</label><input name="Wine Spectator"></div>div>
+                                    <div class="field"><label>Rated by</label><input name="RatedBy"></div>div>
+                                    <div class="field"><label>Additional rating</label><input name="Additional Rating"></div>div>
+                                    <div class="field"><label>Color</label><input name="Color"></div>div>
+                                    <div class="field"><label>Nose</label><input name="Nose"></div>div>
+                                    <div class="field full"><label>Tasting notes</label><textarea name="Tasting Notes"></textarea></div>div>
+                                    <div class="field full"><label>Finish</label><input name="Finish"></div>div>
+                            </div>div>
+                          <div class="modal-actions">
+                                  <button type="button" class="btn ghost" id="form-cancel">Cancel</button>button>
+                                  <button type="submit" class="btn" id="form-save">Save bottle</button>button>
+                          </div>div>
+                    </form>form>
+              </div>div>
+        </div>div>
+    </div>div>
+  
+  <div class="overlay" id="confirm-overlay">
+    <div class="modal modal-wrap" style="max-width:380px;">
+        <div class="modal-body">
+            <div class="confirm">
+                  <h2>Remove this bottle?</h2>
+                  <p id="confirm-text">This can't be undone.</p>
+                  <div class="modal-actions" style="justify-content:center;">
+                          <button class="btn ghost" id="confirm-cancel">Cancel</button>button>
+                          <button class="btn danger" id="confirm-delete">Delete</button>button>
+                  </div>div>
+            </div>div>
+        </div>div>
+    </div>div>
+  </div>div>
+  
+  <footer class="site-footer">Don't Panic! &#128044;</footer>footer>
+  
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+      getFirestore, collection, onSnapshot, doc,
+      setDoc, deleteDoc, addDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  
+  // ----------------------------------------------------------------------
+  // 1. FIREBASE SETUP — replace this with your own project's config.
+  //    Firebase console -> Project settings -> Your apps -> Web app -> Config
+  // ----------------------------------------------------------------------
+  const firebaseConfig = {
+      apiKey: "AIzaSyBmDNDRZkjwXVfYKEEUIKxMJiYk3MR89cs",
+      authDomain: "cellar-ledger.firebaseapp.com",
+      projectId: "cellar-ledger",
+      storageBucket: "cellar-ledger.firebasestorage.app",
+      messagingSenderId: "1067098836617",
+      appId: "1:1067098836617:web:74d3fdad069d621ba04058"
+  };
+  
+  const isConfigured = firebaseConfig.apiKey !== "YOUR_API_KEY";
+  let db = null;
+  let wines = [];
+  
+  if (isConfigured) {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      onSnapshot(collection(db, "wines"), (snap) => {
+            wines = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
+            render();
+      }, (err) => {
+            console.error(err);
+            document.getElementById("config-banner").style.display = "block";
+            document.getElementById("config-banner").innerHTML =
+                    "<strong>Couldn't reach Firestore.</strong> Check that Firestore is enabled in your Firebase project and that your security rules allow read/write, then reload this page.";
+      });
+  } else {
+      document.getElementById("config-banner").style.display = "block";
   }
-  .navbar-inner{
-    max-width:1180px;margin:0 auto;padding:0 1.5rem;
-    display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+  
+  // ----------------------------------------------------------------------
+  // 2. STATE
+  // ----------------------------------------------------------------------
+  let searchTerm = "";
+  let statusFilter = "All";
+  let sortKey = "DatePurchased";
+  let sortDir = "desc";
+  let page = 0;
+  const PAGE_SIZE = 40;
+  let editingId = null;
+  let pendingDeleteId = null;
+  
+  const searchableFields = ["Producer","Type","Vineyard","Region","Tasting Notes","PlacePurchased","RecommendedBy"];
+  
+  function filteredSorted() {
+      let list = wines.slice();
+      if (statusFilter !== "All") {
+            list = list.filter(w => (w.Status || "Pending") === statusFilter);
+      }
+          if (searchTerm.trim()) {
+                const q = searchTerm.trim().toLowerCase();
+                list = list.filter(w => searchableFields.some(f => (w[f] || "").toString().toLowerCase().includes(q)));
+          }
+              list.sort((a, b) => {
+                    let av = a[sortKey], bv = b[sortKey];
+                    if (sortKey === "Price" || sortKey === "MyRating" || sortKey === "Vintage") {
+                            av = Number(av) || 0; bv = Number(bv) || 0;
+                    } else {
+                            av = (av || "").toString(); bv = (bv || "").toString();
+                    }
+                    if (av < bv) return sortDir === "asc" ? -1 : 1;
+                    if (av > bv) return sortDir === "asc" ? 1 : -1;
+                    return 0;
+              });
+      return list;
   }
-  .brand{ display:flex; align-items:center; gap:0.6rem; }
-  .brand svg{ width:24px; height:24px; flex-shrink:0; }
-  .wordmark{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-optical-sizing:auto;
-    font-size:1.65rem;
-    margin:0;
-    letter-spacing:-0.01em;
-    color:var(--cream);
+  
+  function render() {
+      const list = filteredSorted();
+      const total = wines.length;
+      const pending = wines.filter(w => (w.Status || "Pending") === "Pending").length;
+      const complete = wines.filter(w => w.Status === "Complete").length;
+      const rated = wines.map(w => Number(w.MyRating)).filter(n => !isNaN(n) && n > 0);
+      const avgRating = rated.length ? Math.round(rated.reduce((a,b)=>a+b,0) / rated.length) : "\u2014";
+    
+      document.getElementById("stat-total").textContent = total.toLocaleString();
+      document.getElementById("stat-pending").textContent = pending.toLocaleString();
+      document.getElementById("stat-complete").textContent = complete.toLocaleString();
+      document.getElementById("stat-avgrating").textContent = avgRating;
+      document.getElementById("bottle-count-sub").textContent =
+            total ? `${total.toLocaleString()} bottles logged, ${pending.toLocaleString()} still cellared` : "No bottles logged yet";
+    
+      const tbody = document.getElementById("wine-tbody");
+      const emptyState = document.getElementById("empty-state");
+      const table = document.getElementById("wine-table");
+    
+      if (!list.length) {
+            tbody.innerHTML = "";
+            table.style.display = "none";
+            emptyState.style.display = "block";
+            document.getElementById("pager-label").textContent = "";
+            document.getElementById("prev-page").disabled = true;
+            document.getElementById("next-page").disabled = true;
+            return;
+      }
+          table.style.display = "";
+      emptyState.style.display = "none";
+    
+      const maxPage = Math.max(0, Math.ceil(list.length / PAGE_SIZE) - 1);
+      if (page > maxPage) page = maxPage;
+          const start = page * PAGE_SIZE;
+      const pageItems = list.slice(start, start + PAGE_SIZE);
+    
+      tbody.innerHTML = pageItems.map(w => {
+            const status = w.Status || "Pending";
+            const sealClass = status === "Complete" ? "complete" : "pending";
+            const sealLabel = status === "Complete" ? "Uncorked" : "Cellared";
+            const price = w.Price != null && w.Price !== "" ? `$${Number(w.Price).toFixed(2)}` : "\u2014";
+            const rating = w.MyRating != null && w.MyRating !== "" ? w.MyRating : "\u2014";
+            return `
+                  <tr data-id="${w._id}">
+                          <td>
+                                    <div class="wine-name">${escapeHtml(w.Producer || "Unnamed bottle")}</div>
+                                              <div class="wine-sub">${escapeHtml(w.Type || "")}${w.Region ? " &middot; " + escapeHtml(w.Region) : ""}</div>
+                                                      </td>
+                                                              <td><span class="vintage-chip">${escapeHtml(w.Vintage || "\u2014")}</span></td>
+                                                                      <td>${escapeHtml(w.Region || "\u2014")}</td>
+                                                                              <td class="num">${price}</td>
+                                                                                      <td class="num">${rating}</td>
+                                                                                              <td><span class="seal ${sealClass}">${sealLabel}</span></td>
+                                                                                                      <td>
+                                                                                                                <div class="rowactions">
+                                                                                                                            <span class="iconbtn edit" title="Edit">&#9998;</span>
+                                                                                                                                        <span class="iconbtn del" title="Delete">&times;</span>
+                                                                                                                                                  </div>
+                                                                                                                                                          </td>
+                                                                                                                                                                </tr>`;
+      }).join("");
+    
+      document.getElementById("pager-label").textContent =
+            `Showing ${start + 1}\u2013${Math.min(start + PAGE_SIZE, list.length)} of ${list.length.toLocaleString()}`;
+      document.getElementById("prev-page").disabled = page === 0;
+      document.getElementById("next-page").disabled = page >= maxPage;
+    
+      tbody.querySelectorAll("tr").forEach(tr => {
+            const id = tr.dataset.id;
+            tr.querySelector(".edit").addEventListener("click", (e) => { e.stopPropagation(); openEdit(id); });
+            tr.querySelector(".del").addEventListener("click", (e) => { e.stopPropagation(); openConfirm(id); });
+            tr.addEventListener("click", () => openEdit(id));
+      });
   }
-  .wordmark .flourish{ display:inline-block; transform: translateY(1px) rotate(-6deg); color:var(--brass-light); margin:0 0.3rem; font-size:0.7em; }
-  .subhead{ font-size:13px; color:#D8CBB0; margin:0; }
-
-  #config-banner{
-    background:#3A2A1A;
-    border:1px solid var(--brass);
-    color:var(--cream);
-    border-radius:var(--radius);
-    padding:0.9rem 1.1rem;
-    font-size:13.5px;
-    margin-bottom:1.5rem;
-    line-height:1.55;
-    display:none;
+  
+  function escapeHtml(v) {
+      return String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   }
-  #config-banner code{background:rgba(0,0,0,0.25); padding:1px 5px; border-radius:3px; font-family:'IBM Plex Mono', monospace;}
-
-  .stats{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:0.85rem;
-    margin-bottom:1.5rem;
-  }
-  .stat{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow-sm);
-    padding:0.9rem 1.1rem;
-  }
-  .stat .num{ font-family:'IBM Plex Mono', monospace; font-size:1.55rem; font-weight:500; color:var(--wine); display:block; line-height:1.2; }
-  .stat .label{ font-size:11.5px; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink-soft); }
-
-  .panel{
-    background:var(--surface);
-    border-radius:0.75rem;
-    border:1px solid var(--border);
-    box-shadow:var(--shadow-md);
-    overflow:hidden;
-  }
-  .panel-header{
-    padding:1.1rem 1.25rem;
-    border-bottom:1px solid var(--border);
-    background:var(--surface-2);
-  }
-  .panel-body{ padding:0.25rem 1.25rem 0.5rem; }
-
-  .toolbar{
-    display:flex;
-    flex-wrap:wrap;
-    gap:0.6rem;
-    align-items:center;
-  }
-  .toolbar input[type=search]{
-    flex:1 1 220px;
-    min-width:180px;
-    padding:0.55rem 0.8rem;
-    border:1px solid var(--border-strong);
-    border-radius:var(--radius);
-    background:#fff;
-    font-size:14px;
-    color:var(--ink);
-  }
-  .toolbar input[type=search]:focus{ outline:none; border-color:var(--brass); box-shadow:0 0 0 3px rgba(156,122,52,0.15); }
-  .chip-group{
-    display:flex;
-    border:1px solid var(--border-strong);
-    border-radius:var(--radius);
-    overflow:hidden;
-  }
-  .chip{
-    font-family:'Public Sans', sans-serif;
-    font-weight:500;
-    font-size:12.5px;
-    padding:0.5rem 0.85rem;
-    border:none;
-    border-right:1px solid var(--border-strong);
-    background:#fff;
-    color:var(--ink-soft);
-    cursor:pointer;
-    user-select:none;
-  }
-  .chip:last-child{ border-right:none; }
-  .chip.active{ background:var(--wine); color:#fff; }
-  select.sortsel{
-    padding:0.55rem 0.6rem;
-    border:1px solid var(--border-strong);
-    border-radius:var(--radius);
-    background:#fff;
-    font-size:13px;
-    color:var(--ink);
-  }
-  .btn{
-    font-family:'Public Sans', sans-serif;
-    font-weight:600;
-    font-size:13.5px;
-    padding:0.55rem 1.05rem;
-    border-radius:var(--radius);
-    border:1px solid var(--wine);
-    background:var(--wine);
-    color:#fff;
-    cursor:pointer;
-    box-shadow:var(--shadow-sm);
-  }
-  .btn:hover{ background:var(--wine-deep); border-color:var(--wine-deep); }
-  .btn.ghost{ background:#fff; color:var(--ink-soft); border-color:var(--border-strong); box-shadow:none; }
-  .btn.ghost:hover{ background:var(--surface-2); color:var(--ink); }
-  .btn.small{ padding:0.3rem 0.6rem; font-size:12px; }
-  .btn.danger{ border-color:var(--danger); background:var(--danger); }
-  .btn.danger:hover{ background:#6B2222; border-color:#6B2222; }
-
-  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
-  thead th{
-    text-align:left;
-    font-family:'Public Sans', sans-serif;
-    font-size:11.5px;
-    font-weight:600;
-    letter-spacing:0.04em;
-    text-transform:uppercase;
-    color:var(--ink-soft);
-    background:var(--surface-2);
-    border-bottom:1px solid var(--border);
-    padding:0.7rem 0.75rem;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  thead th.active{ color:var(--wine); }
-  tbody tr{ border-bottom:1px solid var(--border); cursor:pointer; }
-  tbody tr:nth-child(even){ background:rgba(235,225,202,0.35); }
-  tbody tr:hover{ background:var(--surface-3); }
-  tbody td{ padding:0.65rem 0.75rem; vertical-align:middle; }
-  td.num{ font-family:'IBM Plex Mono', monospace; }
-  .wine-name{ font-family:'Fraunces', serif; font-weight:600; font-size:14.5px; }
-  .wine-sub{ color:var(--ink-soft); font-size:12px; }
-  .vintage-chip{
-    display:inline-block;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11.5px;
-    background:var(--surface-3);
-    border:1px solid var(--border-strong);
-    border-radius:4px;
-    padding:1px 7px;
-  }
-  .seal{
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
-    font-family:'Public Sans', sans-serif;
-    font-weight:600;
-    font-size:11px;
-    letter-spacing:0.02em;
-    padding:3px 9px 3px 7px;
-    border-radius:999px;
-  }
-  .seal::before{ content:''; width:6px; height:6px; border-radius:50%; display:inline-block; }
-  .seal.complete{ background:var(--success-bg); color:var(--success); }
-  .seal.complete::before{ background:var(--success); }
-  .seal.pending{ background:var(--pending-bg); color:var(--pending); }
-  .seal.pending::before{ background:var(--pending); }
-
-  .rowactions{ display:flex; gap:6px; opacity:0; transition:opacity 0.1s; }
-  tbody tr:hover .rowactions{ opacity:1; }
-  .iconbtn{
-    border:1px solid var(--border-strong);
-    background:#fff;
-    border-radius:4px;
-    width:26px; height:26px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    color:var(--ink-soft);
-    font-size:13px;
-  }
-  .iconbtn:hover{ border-color:var(--wine); color:var(--wine); }
-  .iconbtn.del:hover{ border-color:var(--danger); color:var(--danger); }
-
-  .empty{ text-align:center; padding:3rem 1rem; color:var(--ink-soft); }
-  .empty .big{ font-family:'Fraunces', serif; font-size:1.3rem; color:var(--ink); margin-bottom:0.3rem; }
-
-  .pager{ display:flex; justify-content:space-between; align-items:center; padding:0.9rem 1.25rem; font-size:12.5px; color:var(--ink-soft); border-top:1px solid var(--border); background:var(--surface-2); }
-  .pager button{ background:none; border:none; color:var(--wine); cursor:pointer; font-weight:600; font-size:13px; }
-  .pager button:disabled{ color:#C4B896; cursor:default; }
-
-  .overlay{
-    position:fixed; inset:0; background:rgba(20,13,7,0.68);
-    display:none; align-items:center; justify-content:center; padding:1.5rem; z-index:50;
-  }
-  .overlay.open{ display:flex; }
-  .modal{
-    background:var(--surface); border-radius:0.75rem; max-width:640px; width:100%;
-    max-height:88vh; overflow-y:auto; padding:0; box-shadow:var(--shadow-md);
-    border:1px solid var(--border);
-  }
-  .modal-head{ padding:1.25rem 1.6rem; border-bottom:1px solid var(--border); background:var(--surface-2); }
-  .modal-body{ padding:1.4rem 1.6rem; }
-  .modal h2{ font-family:'Fraunces', serif; font-size:1.3rem; margin:0; }
-  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0.8rem 1rem; }
-  .form-grid .full{ grid-column:1 / -1; }
-  .field label{ display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft); margin-bottom:0.3rem; }
-  .field input, .field select, .field textarea{
-    width:100%; padding:0.5rem 0.6rem; border:1px solid var(--border-strong); border-radius:var(--radius);
-    font-family:'Public Sans', sans-serif; font-size:13.5px; background:#fff; color:var(--ink);
-  }
-  .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--brass); box-shadow:0 0 0 3px rgba(156,122,52,0.15); }
-  .field textarea{ resize:vertical; min-height:56px; }
-  .modal-actions{ display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.3rem; }
-  .modal-close{ position:absolute; top:1.1rem; right:1.2rem; background:none; border:none; font-size:1.3rem; color:var(--ink-soft); cursor:pointer; }
-  .modal-wrap{ position:relative; }
-
-  .confirm{ text-align:center; }
-  .confirm p{ margin:0.8rem 0 1.3rem; color:var(--ink-soft); font-size:14px; }
-
-  @media (max-width: 640px){
-    .stats{ grid-template-columns:repeat(2, 1fr); }
-    .form-grid{ grid-template-columns:1fr; }
-    table, thead, tbody, tr, th, td { display:block; }
-    thead{ display:none; }
-    tbody tr{ padding:0.6rem 0; border-bottom:1px solid var(--border); }
-    tbody td{ padding:0.15rem 0.75rem; }
-  }
-</style>
-</head>
-<body>
-
-<header class="navbar">
-  <div class="navbar-inner">
-    <div class="brand">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#D9BA72" stroke-width="1.4">
-        <path d="M7 3h10l-1 7a4 4 0 0 1-8 0L7 3z"/>
-        <path d="M12 14v6M9 20h6"/>
-      </svg>
-      <h1 class="wordmark">Pour<span class="flourish">&#8258;</span>Ledger</h1>
-    </div>
-    <p class="subhead" id="bottle-count-sub">Loading your collection&hellip;</p>
-  </div>
-</header>
-
-<div class="wrap">
-  <div id="config-banner">
-    <strong>Firebase isn't connected yet.</strong> Open this file in a text editor, find the
-    <code>firebaseConfig</code> object near the bottom of the file, and paste in your project's
-    web app config from the Firebase console. Until then this is showing an empty demo state &mdash;
-    nothing you add will be saved.
-  </div>
-
-  <div class="stats">
-    <div class="stat"><span class="num" id="stat-total">&mdash;</span><span class="label">Total bottles</span></div>
-    <div class="stat"><span class="num" id="stat-pending">&mdash;</span><span class="label">In the cellar</span></div>
-    <div class="stat"><span class="num" id="stat-complete">&mdash;</span><span class="label">Uncorked</span></div>
-    <div class="stat"><span class="num" id="stat-avgrating">&mdash;</span><span class="label">Avg. rating</span></div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-header">
-      <div class="toolbar">
-        <input type="search" id="search" placeholder="Search producer, type, region, vineyard, notes&hellip;">
-        <div class="chip-group" id="status-filters">
-          <span class="chip active" data-status="All">All</span>
-          <span class="chip" data-status="Pending">Cellared</span>
-          <span class="chip" data-status="Complete">Uncorked</span>
-        </div>
-        <select class="sortsel" id="sort-select">
-          <option value="DatePurchased-desc">Newest purchase</option>
-          <option value="DatePurchased-asc">Oldest purchase</option>
-          <option value="Vintage-desc">Vintage (new&rarr;old)</option>
-          <option value="Vintage-asc">Vintage (old&rarr;new)</option>
-          <option value="Producer-asc">Producer A&ndash;Z</option>
-          <option value="Price-desc">Price (high&rarr;low)</option>
-          <option value="MyRating-desc">My rating (high&rarr;low)</option>
-        </select>
-        <button class="btn" id="add-btn">+ Add bottle</button>
-      </div>
-    </div>
-
-    <div class="panel-body">
-      <div id="table-region">
-        <table id="wine-table">
-          <thead>
-            <tr>
-              <th>Bottle</th>
-              <th>Vintage</th>
-              <th>Region</th>
-              <th>Price</th>
-              <th>My rating</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="wine-tbody"></tbody>
-        </table>
-        <div class="empty" id="empty-state" style="display:none;">
-          <p class="big">No bottles match this search.</p>
-          <p>Try clearing the filters, or add a new bottle to start the ledger.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="pager">
-      <span id="pager-label">&nbsp;</span>
-      <span>
-        <button id="prev-page">&larr; Prev</button>
-        &nbsp;&nbsp;
-        <button id="next-page">Next &rarr;</button>
-      </span>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="form-overlay">
-  <div class="modal modal-wrap">
-    <button class="modal-close" id="form-close" aria-label="Close">&times;</button>
-    <div class="modal-head"><h2 id="form-title">Add bottle</h2></div>
-    <div class="modal-body">
-    <form id="wine-form">
-      <div class="form-grid">
-        <div class="field"><label>Producer</label><input name="Producer" placeholder="e.g. Sequoia Grove"></div>
-        <div class="field"><label>Vineyard</label><input name="Vineyard"></div>
-        <div class="field"><label>Type / varietal</label><input name="Type" placeholder="e.g. Cabernet Sauvignon"></div>
-        <div class="field"><label>Region</label><input name="Region"></div>
-        <div class="field"><label>Vintage</label><input name="Vintage" type="number" min="1900" max="2100"></div>
-        <div class="field"><label>Status</label>
-          <select name="Status">
-            <option value="Pending">Cellared (pending)</option>
-            <option value="Complete">Uncorked (complete)</option>
-          </select>
-        </div>
-        <div class="field"><label>Date purchased</label><input name="DatePurchased" type="date"></div>
-        <div class="field"><label>Place purchased</label><input name="PlacePurchased"></div>
-        <div class="field"><label>Price ($)</label><input name="Price" type="number" step="0.01" min="0"></div>
-        <div class="field"><label>Recommended by</label><input name="RecommendedBy"></div>
-        <div class="field"><label>Date consumed</label><input name="DateConsumed" type="date"></div>
-        <div class="field"><label>My rating (0&ndash;100)</label><input name="MyRating" type="number" min="0" max="100"></div>
-        <div class="field"><label>Drink window &mdash; start</label><input name="DrinkStart"></div>
-        <div class="field"><label>Drink window &mdash; finish</label><input name="DrinkFinish"></div>
-        <div class="field"><label>Robert Parker score</label><input name="RobertParker"></div>
-        <div class="field"><label>Wine Spectator score</label><input name="Wine Spectator"></div>
-        <div class="field"><label>Rated by</label><input name="RatedBy"></div>
-        <div class="field"><label>Additional rating</label><input name="Additional Rating"></div>
-        <div class="field"><label>Color</label><input name="Color"></div>
-        <div class="field"><label>Nose</label><input name="Nose"></div>
-        <div class="field full"><label>Tasting notes</label><textarea name="Tasting Notes"></textarea></div>
-        <div class="field full"><label>Finish</label><input name="Finish"></div>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn ghost" id="form-cancel">Cancel</button>
-        <button type="submit" class="btn" id="form-save">Save bottle</button>
-      </div>
-    </form>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="confirm-overlay">
-  <div class="modal modal-wrap" style="max-width:380px;">
-    <div class="modal-body">
-    <div class="confirm">
-      <h2>Remove this bottle?</h2>
-      <p id="confirm-text">This can't be undone.</p>
-      <div class="modal-actions" style="justify-content:center;">
-        <button class="btn ghost" id="confirm-cancel">Cancel</button>
-        <button class="btn danger" id="confirm-delete">Delete</button>
-      </div>
-    </div>
-    </div>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore, collection, onSnapshot, doc,
-  setDoc, deleteDoc, addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-// ----------------------------------------------------------------------
-// 1. FIREBASE SETUP — replace this with your own project's config.
-//    Firebase console -> Project settings -> Your apps -> Web app -> Config
-// ----------------------------------------------------------------------
-const firebaseConfig = {
-  apiKey: "AIzaSyBmDNDRZkjwXVfYKEEUIKxMJiYk3MR89cs",
-  authDomain: "cellar-ledger.firebaseapp.com",
-  projectId: "cellar-ledger",
-  storageBucket: "cellar-ledger.firebasestorage.app",
-  messagingSenderId: "1067098836617",
-  appId: "1:1067098836617:web:74d3fdad069d621ba04058"
-};
-
-const isConfigured = firebaseConfig.apiKey !== "YOUR_API_KEY";
-let db = null;
-let wines = [];
-
-if (isConfigured) {
-  const app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
-  onSnapshot(collection(db, "wines"), (snap) => {
-    wines = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
-    render();
-  }, (err) => {
-    console.error(err);
-    document.getElementById("config-banner").style.display = "block";
-    document.getElementById("config-banner").innerHTML =
-      "<strong>Couldn't reach Firestore.</strong> Check that Firestore is enabled in your Firebase project and that your security rules allow read/write, then reload this page.";
+  
+  // ----------------------------------------------------------------------
+  // 3. TOOLBAR EVENTS
+  // ----------------------------------------------------------------------
+  document.getElementById("search").addEventListener("input", (e) => {
+      searchTerm = e.target.value; page = 0; render();
   });
-} else {
-  document.getElementById("config-banner").style.display = "block";
-}
-
-// ----------------------------------------------------------------------
-// 2. STATE
-// ----------------------------------------------------------------------
-let searchTerm = "";
-let statusFilter = "All";
-let sortKey = "DatePurchased";
-let sortDir = "desc";
-let page = 0;
-const PAGE_SIZE = 40;
-let editingId = null;
-let pendingDeleteId = null;
-
-const searchableFields = ["Producer","Type","Vineyard","Region","Tasting Notes","PlacePurchased","RecommendedBy"];
-
-function filteredSorted() {
-  let list = wines.slice();
-  if (statusFilter !== "All") {
-    list = list.filter(w => (w.Status || "Pending") === statusFilter);
-  }
-  if (searchTerm.trim()) {
-    const q = searchTerm.trim().toLowerCase();
-    list = list.filter(w => searchableFields.some(f => (w[f] || "").toString().toLowerCase().includes(q)));
-  }
-  list.sort((a, b) => {
-    let av = a[sortKey], bv = b[sortKey];
-    if (sortKey === "Price" || sortKey === "MyRating" || sortKey === "Vintage") {
-      av = Number(av) || 0; bv = Number(bv) || 0;
-    } else {
-      av = (av || "").toString(); bv = (bv || "").toString();
-    }
-    if (av < bv) return sortDir === "asc" ? -1 : 1;
-    if (av > bv) return sortDir === "asc" ? 1 : -1;
-    return 0;
+  document.querySelectorAll("#status-filters .chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+            document.querySelectorAll("#status-filters .chip").forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            statusFilter = chip.dataset.status;
+            page = 0; render();
+      });
   });
-  return list;
-}
-
-function render() {
-  const list = filteredSorted();
-  const total = wines.length;
-  const pending = wines.filter(w => (w.Status || "Pending") === "Pending").length;
-  const complete = wines.filter(w => w.Status === "Complete").length;
-  const rated = wines.map(w => Number(w.MyRating)).filter(n => !isNaN(n) && n > 0);
-  const avgRating = rated.length ? Math.round(rated.reduce((a,b)=>a+b,0) / rated.length) : "\u2014";
-
-  document.getElementById("stat-total").textContent = total.toLocaleString();
-  document.getElementById("stat-pending").textContent = pending.toLocaleString();
-  document.getElementById("stat-complete").textContent = complete.toLocaleString();
-  document.getElementById("stat-avgrating").textContent = avgRating;
-  document.getElementById("bottle-count-sub").textContent =
-    total ? `${total.toLocaleString()} bottles logged, ${pending.toLocaleString()} still cellared` : "No bottles logged yet";
-
-  const tbody = document.getElementById("wine-tbody");
-  const emptyState = document.getElementById("empty-state");
-  const table = document.getElementById("wine-table");
-
-  if (!list.length) {
-    tbody.innerHTML = "";
-    table.style.display = "none";
-    emptyState.style.display = "block";
-    document.getElementById("pager-label").textContent = "";
-    document.getElementById("prev-page").disabled = true;
-    document.getElementById("next-page").disabled = true;
-    return;
-  }
-  table.style.display = "";
-  emptyState.style.display = "none";
-
-  const maxPage = Math.max(0, Math.ceil(list.length / PAGE_SIZE) - 1);
-  if (page > maxPage) page = maxPage;
-  const start = page * PAGE_SIZE;
-  const pageItems = list.slice(start, start + PAGE_SIZE);
-
-  tbody.innerHTML = pageItems.map(w => {
-    const status = w.Status || "Pending";
-    const sealClass = status === "Complete" ? "complete" : "pending";
-    const sealLabel = status === "Complete" ? "Uncorked" : "Cellared";
-    const price = w.Price != null && w.Price !== "" ? `$${Number(w.Price).toFixed(2)}` : "\u2014";
-    const rating = w.MyRating != null && w.MyRating !== "" ? w.MyRating : "\u2014";
-    return `
-      <tr data-id="${w._id}">
-        <td>
-          <div class="wine-name">${escapeHtml(w.Producer || "Unnamed bottle")}</div>
-          <div class="wine-sub">${escapeHtml(w.Type || "")}${w.Region ? " &middot; " + escapeHtml(w.Region) : ""}</div>
-        </td>
-        <td><span class="vintage-chip">${escapeHtml(w.Vintage || "\u2014")}</span></td>
-        <td>${escapeHtml(w.Region || "\u2014")}</td>
-        <td class="num">${price}</td>
-        <td class="num">${rating}</td>
-        <td><span class="seal ${sealClass}">${sealLabel}</span></td>
-        <td>
-          <div class="rowactions">
-            <span class="iconbtn edit" title="Edit">&#9998;</span>
-            <span class="iconbtn del" title="Delete">&times;</span>
-          </div>
-        </td>
-      </tr>`;
-  }).join("");
-
-  document.getElementById("pager-label").textContent =
-    `Showing ${start + 1}\u2013${Math.min(start + PAGE_SIZE, list.length)} of ${list.length.toLocaleString()}`;
-  document.getElementById("prev-page").disabled = page === 0;
-  document.getElementById("next-page").disabled = page >= maxPage;
-
-  tbody.querySelectorAll("tr").forEach(tr => {
-    const id = tr.dataset.id;
-    tr.querySelector(".edit").addEventListener("click", (e) => { e.stopPropagation(); openEdit(id); });
-    tr.querySelector(".del").addEventListener("click", (e) => { e.stopPropagation(); openConfirm(id); });
-    tr.addEventListener("click", () => openEdit(id));
+  document.getElementById("sort-select").addEventListener("change", (e) => {
+      const [key, dir] = e.target.value.split("-");
+      sortKey = key; sortDir = dir; render();
   });
-}
-
-function escapeHtml(v) {
-  return String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-
-// ----------------------------------------------------------------------
-// 3. TOOLBAR EVENTS
-// ----------------------------------------------------------------------
-document.getElementById("search").addEventListener("input", (e) => {
-  searchTerm = e.target.value; page = 0; render();
-});
-document.querySelectorAll("#status-filters .chip").forEach(chip => {
-  chip.addEventListener("click", () => {
-    document.querySelectorAll("#status-filters .chip").forEach(c => c.classList.remove("active"));
-    chip.classList.add("active");
-    statusFilter = chip.dataset.status;
-    page = 0; render();
-  });
-});
-document.getElementById("sort-select").addEventListener("change", (e) => {
-  const [key, dir] = e.target.value.split("-");
-  sortKey = key; sortDir = dir; render();
-});
-document.getElementById("prev-page").addEventListener("click", () => { page = Math.max(0, page - 1); render(); });
-document.getElementById("next-page").addEventListener("click", () => { page += 1; render(); });
-
-// ----------------------------------------------------------------------
-// 4. ADD / EDIT MODAL
-// ----------------------------------------------------------------------
-const formOverlay = document.getElementById("form-overlay");
-const wineForm = document.getElementById("wine-form");
-
-document.getElementById("add-btn").addEventListener("click", () => openAdd());
-document.getElementById("form-close").addEventListener("click", closeForm);
-document.getElementById("form-cancel").addEventListener("click", closeForm);
-formOverlay.addEventListener("click", (e) => { if (e.target === formOverlay) closeForm(); });
-
-function openAdd() {
-  editingId = null;
-  document.getElementById("form-title").textContent = "Add bottle";
-  wineForm.reset();
-  wineForm.querySelector('[name="Status"]').value = "Pending";
-  formOverlay.classList.add("open");
-}
-
-function openEdit(id) {
-  const w = wines.find(x => x._id === id);
-  if (!w) return;
-  editingId = id;
-  document.getElementById("form-title").textContent = `Edit ${w.Producer || "bottle"}`;
-  wineForm.reset();
-  Array.from(wineForm.elements).forEach(el => {
-    if (el.name && w[el.name] != null) el.value = w[el.name];
-  });
-  formOverlay.classList.add("open");
-}
-
-function closeForm() {
-  formOverlay.classList.remove("open");
-}
-
-wineForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (!isConfigured) {
-    alert("Add your Firebase config at the bottom of this file before saving bottles.");
-    return;
+  document.getElementById("prev-page").addEventListener("click", () => { page = Math.max(0, page - 1); render(); });
+  document.getElementById("next-page").addEventListener("click", () => { page += 1; render(); });
+  
+  // ----------------------------------------------------------------------
+  // 4. ADD / EDIT MODAL
+  // ----------------------------------------------------------------------
+  const formOverlay = document.getElementById("form-overlay");
+  const wineForm = document.getElementById("wine-form");
+  
+  document.getElementById("add-btn").addEventListener("click", () => openAdd());
+  document.getElementById("form-close").addEventListener("click", closeForm);
+  document.getElementById("form-cancel").addEventListener("click", closeForm);
+  formOverlay.addEventListener("click", (e) => { if (e.target === formOverlay) closeForm(); });
+  
+  function openAdd() {
+      editingId = null;
+      document.getElementById("form-title").textContent = "Add bottle";
+      wineForm.reset();
+      wineForm.querySelector('[name="Status"]').value = "Pending";
+      formOverlay.classList.add("open");
   }
-  const data = {};
-  Array.from(wineForm.elements).forEach(el => {
-    if (!el.name) return;
-    let v = el.value;
-    if (el.type === "number" && v !== "") v = Number(v);
-    if (v !== "") data[el.name] = v;
+  
+  function openEdit(id) {
+      const w = wines.find(x => x._id === id);
+      if (!w) return;
+          editingId = id;
+      document.getElementById("form-title").textContent = `Edit ${w.Producer || "bottle"}`;
+      wineForm.reset();
+      Array.from(wineForm.elements).forEach(el => {
+            if (el.name && w[el.name] != null) el.value = w[el.name];
+      });
+      formOverlay.classList.add("open");
+  }
+  
+  function closeForm() {
+      formOverlay.classList.remove("open");
+  }
+  
+  wineForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!isConfigured) {
+            alert("Add your Firebase config at the bottom of this file before saving bottles.");
+            return;
+      }
+      const data = {};
+      Array.from(wineForm.elements).forEach(el => {
+            if (!el.name) return;
+            let v = el.value;
+            if (el.type === "number" && v !== "") v = Number(v);
+            if (v !== "") data[el.name] = v;
+      });
+      try {
+            if (editingId) {
+                    await setDoc(doc(db, "wines", editingId), data, { merge: true });
+            } else {
+                    const nextId = wines.length ? Math.max(...wines.map(w => Number(w.WineID) || 0)) + 1 : 1;
+                    data.WineID = nextId;
+                    await addDoc(collection(db, "wines"), data);
+            }
+            closeForm();
+      } catch (err) {
+            console.error(err);
+            alert("Couldn't save that bottle. Check the browser console for details.");
+      }
   });
-  try {
-    if (editingId) {
-      await setDoc(doc(db, "wines", editingId), data, { merge: true });
-    } else {
-      const nextId = wines.length ? Math.max(...wines.map(w => Number(w.WineID) || 0)) + 1 : 1;
-      data.WineID = nextId;
-      await addDoc(collection(db, "wines"), data);
-    }
-    closeForm();
-  } catch (err) {
-    console.error(err);
-    alert("Couldn't save that bottle. Check the browser console for details.");
+  
+  // ----------------------------------------------------------------------
+  // 5. DELETE CONFIRM
+  // ----------------------------------------------------------------------
+  const confirmOverlay = document.getElementById("confirm-overlay");
+  document.getElementById("confirm-cancel").addEventListener("click", () => confirmOverlay.classList.remove("open"));
+  confirmOverlay.addEventListener("click", (e) => { if (e.target === confirmOverlay) confirmOverlay.classList.remove("open"); });
+  
+  function openConfirm(id) {
+      const w = wines.find(x => x._id === id);
+      pendingDeleteId = id;
+      document.getElementById("confirm-text").textContent =
+            w ? `"${w.Producer || "This bottle"}" will be removed from the ledger for good.` : "This can't be undone.";
+      confirmOverlay.classList.add("open");
   }
-});
-
-// ----------------------------------------------------------------------
-// 5. DELETE CONFIRM
-// ----------------------------------------------------------------------
-const confirmOverlay = document.getElementById("confirm-overlay");
-document.getElementById("confirm-cancel").addEventListener("click", () => confirmOverlay.classList.remove("open"));
-confirmOverlay.addEventListener("click", (e) => { if (e.target === confirmOverlay) confirmOverlay.classList.remove("open"); });
-
-function openConfirm(id) {
-  const w = wines.find(x => x._id === id);
-  pendingDeleteId = id;
-  document.getElementById("confirm-text").textContent =
-    w ? `"${w.Producer || "This bottle"}" will be removed from the ledger for good.` : "This can't be undone.";
-  confirmOverlay.classList.add("open");
-}
-
-document.getElementById("confirm-delete").addEventListener("click", async () => {
-  if (!pendingDeleteId) return;
-  try {
-    await deleteDoc(doc(db, "wines", pendingDeleteId));
-  } catch (err) {
-    console.error(err);
-    alert("Couldn't delete that bottle. Check the browser console for details.");
-  }
-  confirmOverlay.classList.remove("open");
-});
-
-render();
-</script>
-</body>
-</html>
+  
+  document.getElementById("confirm-delete").addEventListener("click", async () => {
+      if (!pendingDeleteId) return;
+      try {
+            await deleteDoc(doc(db, "wines", pendingDeleteId));
+      } catch (err) {
+            console.error(err);
+            alert("Couldn't delete that bottle. Check the browser console for details.");
+      }
+      confirmOverlay.classList.remove("open");
+  });
+  
+  render();
+  </script>
+  </body>
+</html>html>
+</h2></label></label>
+                </span></p></th></th>
+                                                </tr>
+                                  </thead></code></strong>
+                                </defs>
+  </body>
+  </style></title>
+  </head>
