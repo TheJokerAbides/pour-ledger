@@ -366,11 +366,11 @@
         <select class="sortsel" id="sort-select">
           <option value="DatePurchased-desc">Newest purchase</option>
           <option value="DatePurchased-asc">Oldest purchase</option>
-          <option value="Vintage-desc">Vintage (new&rarr;old)</option>
-          <option value="Vintage-asc">Vintage (old&rarr;new)</option>
-          <option value="Producer-asc">Producer A&ndash;Z</option>
-          <option value="Price-desc">Price (high&rarr;low)</option>
-          <option value="MyRating-desc">My rating (high&rarr;low)</option>
+          <option value="Vintage-desc">Vintage (new→old)</option>
+          <option value="Vintage-asc">Vintage (old→new)</option>
+          <option value="Producer-asc">Producer A–Z</option>
+          <option value="Price-desc">Price (high→low)</option>
+          <option value="MyRating-desc">My rating (high→low)</option>
         </select>
         <button class="btn" id="add-btn">+ Add bottle</button>
       </div>
@@ -433,9 +433,9 @@
         <div class="field"><label>Price ($)</label><input name="Price" type="number" step="0.01" min="0"></div>
         <div class="field"><label>Recommended by</label><input name="RecommendedBy"></div>
         <div class="field"><label>Date consumed</label><input name="DateConsumed" type="date"></div>
-        <div class="field"><label>My rating (0&ndash;100)</label><input name="MyRating" type="number" min="0" max="100"></div>
-        <div class="field"><label>Drink window &mdash; start</label><input name="DrinkStart"></div>
-        <div class="field"><label>Drink window &mdash; finish</label><input name="DrinkFinish"></div>
+        <div class="field"><label>My rating (0–100)</label><input name="MyRating" type="number" min="0" max="100"></div>
+        <div class="field"><label>Drink window — start</label><input name="DrinkStart"></div>
+        <div class="field"><label>Drink window — finish</label><input name="DrinkFinish"></div>
         <div class="field"><label>Robert Parker score</label><input name="RobertParker"></div>
         <div class="field"><label>Wine Spectator score</label><input name="Wine Spectator"></div>
         <div class="field"><label>Rated by</label><input name="RatedBy"></div>
@@ -469,7 +469,7 @@
   </div>
 </div>
 
-<footer class="site-footer">Don't Panic! &#128044;</footer>
+<footer class="site-footer">Don't Panic! 🍷</footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
@@ -554,7 +554,7 @@ function render() {
   const pending = wines.filter(w => (w.Status || "Pending") === "Pending").length;
   const complete = wines.filter(w => w.Status === "Complete").length;
   const rated = wines.map(w => Number(w.MyRating)).filter(n => !isNaN(n) && n > 0);
-  const avgRating = rated.length ? Math.round(rated.reduce((a,b)=>a+b,0) / rated.length) : "\u2014";
+  const avgRating = rated.length ? Math.round(rated.reduce((a,b)=>a+b,0) / rated.length) : "—";
 
   document.getElementById("stat-total").textContent = total.toLocaleString();
   document.getElementById("stat-pending").textContent = pending.toLocaleString();
@@ -588,30 +588,30 @@ function render() {
     const status = w.Status || "Pending";
     const sealClass = status === "Complete" ? "complete" : "pending";
     const sealLabel = status === "Complete" ? "Uncorked" : "Cellared";
-    const price = w.Price != null && w.Price !== "" ? `$${Number(w.Price).toFixed(2)}` : "\u2014";
-    const rating = w.MyRating != null && w.MyRating !== "" ? w.MyRating : "\u2014";
+    const price = w.Price != null && w.Price !== "" ? `$${Number(w.Price).toFixed(2)}` : "—";
+    const rating = w.MyRating != null && w.MyRating !== "" ? w.MyRating : "—";
     return `
       <tr data-id="${w._id}">
         <td>
           <div class="wine-name">${escapeHtml(w.Producer || "Unnamed bottle")}</div>
-          <div class="wine-sub">${escapeHtml(w.Type || "")}${w.Region ? " &middot; " + escapeHtml(w.Region) : ""}</div>
+          <div class="wine-sub">${escapeHtml(w.Type || "")}${w.Region ? " · " + escapeHtml(w.Region) : ""}</div>
         </td>
-        <td><span class="vintage-chip">${escapeHtml(w.Vintage || "\u2014")}</span></td>
-        <td>${escapeHtml(w.Region || "\u2014")}</td>
+        <td><span class="vintage-chip">${escapeHtml(w.Vintage || "—")}</span></td>
+        <td>${escapeHtml(w.Region || "—")}</td>
         <td class="num">${price}</td>
         <td class="num">${rating}</td>
         <td><span class="seal ${sealClass}">${sealLabel}</span></td>
         <td>
           <div class="rowactions">
-            <span class="iconbtn edit" title="Edit">&#9998;</span>
-            <span class="iconbtn del" title="Delete">&times;</span>
+            <span class="iconbtn edit" title="Edit">✎</span>
+            <span class="iconbtn del" title="Delete">×</span>
           </div>
         </td>
       </tr>`;
   }).join("");
 
   document.getElementById("pager-label").textContent =
-    `Showing ${start + 1}\u2013${Math.min(start + PAGE_SIZE, list.length)} of ${list.length.toLocaleString()}`;
+    `Showing ${start + 1}–${Math.min(start + PAGE_SIZE, list.length)} of ${list.length.toLocaleString()}`;
   document.getElementById("prev-page").disabled = page === 0;
   document.getElementById("next-page").disabled = page >= maxPage;
 
@@ -624,7 +624,7 @@ function render() {
 }
 
 function escapeHtml(v) {
-  return String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  return String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 }
 
 // ----------------------------------------------------------------------
