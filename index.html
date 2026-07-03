@@ -357,7 +357,7 @@
   <div class="stats">
     <div class="stat"><span class="num" id="stat-total">&mdash;</span><span class="label">Bottles shown</span></div>
     <div class="stat"><span class="num" id="stat-pending">&mdash;</span><span class="label">In the cellar</span></div>
-    <div class="stat"><span class="num" id="stat-complete">&mdash;</span><span class="label">Uncorked</span></div>
+    <div class="stat"><span class="num" id="stat-complete">&mdash;</span><span class="label">Drank</span></div>
     <div class="stat"><span class="num" id="stat-avgrating">&mdash;</span><span class="label">Avg. rating</span></div>
   </div>
 
@@ -368,7 +368,7 @@
         <div class="chip-group" id="status-filters">
           <span class="chip active" data-status="All">All</span>
           <span class="chip" data-status="Pending">Cellared</span>
-          <span class="chip" data-status="Complete">Uncorked</span>
+          <span class="chip" data-status="Complete">Drank</span>
         </div>
         <select class="sortsel" id="type-filter">
           <option value="All">All types</option>
@@ -439,7 +439,7 @@
         <div class="field"><label>Status</label>
           <select name="Status">
             <option value="Pending">Cellared (pending)</option>
-            <option value="Complete">Uncorked (complete)</option>
+            <option value="Complete">Drank (complete)</option>
           </select>
         </div>
         <div class="field"><label>Date purchased</label><input name="DatePurchased" type="date"></div>
@@ -645,7 +645,7 @@ function render() {
   tbody.innerHTML = pageItems.map(w => {
     const status = w.Status || "Pending";
     const sealClass = status === "Complete" ? "complete" : "pending";
-    const sealLabel = status === "Complete" ? "Uncorked" : "Cellared";
+    const sealLabel = status === "Complete" ? "Drank" : "Cellared";
     const price = w.Price != null && w.Price !== "" ? `$${Number(w.Price).toFixed(2)}` : "\u2014";
     const rating = w.MyRating != null && w.MyRating !== "" ? w.MyRating : "\u2014";
     return `
