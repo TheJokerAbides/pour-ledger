@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Pour Ledger</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%2309090A'/%3E%3Cpath d='M7 4h10l-1 7a4 4 0 0 1-8 0L7 4z' fill='none' stroke='%23E4E4E6' stroke-width='1.7' stroke-linejoin='round'/%3E%3Cpath d='M12 15v5M9 20h6' stroke='%23E4E4E6' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="shortcut icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%2309090A'/%3E%3Cpath d='M7 4h10l-1 7a4 4 0 0 1-8 0L7 4z' fill='none' stroke='%23E4E4E6' stroke-width='1.7' stroke-linejoin='round'/%3E%3Cpath d='M12 15v5M9 20h6' stroke='%23E4E4E6' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%2309090A'/%3E%3Cpath d='M7 4h10l-1 7a4 4 0 0 1-8 0L7 4z' fill='none' stroke='%23E4E4E6' stroke-width='1.7' stroke-linejoin='round'/%3E%3Cpath d='M12 15v5M9 20h6' stroke='%23E4E4E6' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -214,9 +211,6 @@
     white-space:nowrap;
   }
   thead th.active{ color:var(--ink); }
-  thead th[data-sort]::after{ content:''; display:inline-block; width:0.6em; }
-  thead th.sort-asc::after{ content:'\2191'; margin-left:2px; }
-  thead th.sort-desc::after{ content:'\2193'; margin-left:2px; }
   tbody tr{ border-bottom:1px solid var(--border); cursor:pointer; }
   tbody tr:nth-child(even){ background:rgba(224,224,221,0.35); }
   tbody tr:hover{ background:var(--surface-3); }
@@ -323,7 +317,6 @@
     tbody td{ padding:0.15rem 0.75rem; }
   }
 </style>
-<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js" defer></script>
 </head>
 <body>
 
@@ -355,9 +348,9 @@
   </div>
 
   <div class="stats">
-    <div class="stat"><span class="num" id="stat-total">&mdash;</span><span class="label">Bottles shown</span></div>
+    <div class="stat"><span class="num" id="stat-total">&mdash;</span><span class="label">Total bottles</span></div>
     <div class="stat"><span class="num" id="stat-pending">&mdash;</span><span class="label">In the cellar</span></div>
-    <div class="stat"><span class="num" id="stat-complete">&mdash;</span><span class="label">Drank</span></div>
+    <div class="stat"><span class="num" id="stat-complete">&mdash;</span><span class="label">Uncorked</span></div>
     <div class="stat"><span class="num" id="stat-avgrating">&mdash;</span><span class="label">Avg. rating</span></div>
   </div>
 
@@ -368,25 +361,17 @@
         <div class="chip-group" id="status-filters">
           <span class="chip active" data-status="All">All</span>
           <span class="chip" data-status="Pending">Cellared</span>
-          <span class="chip" data-status="Complete">Drank</span>
+          <span class="chip" data-status="Complete">Uncorked</span>
         </div>
-        <select class="sortsel" id="type-filter">
-          <option value="All">All types</option>
-        </select>
-        <select class="sortsel" id="region-filter">
-          <option value="All">All regions</option>
-        </select>
         <select class="sortsel" id="sort-select">
           <option value="DatePurchased-desc">Newest purchase</option>
           <option value="DatePurchased-asc">Oldest purchase</option>
-          <option value="Vintage-desc">Vintage (new&rarr;old)</option>
-          <option value="Vintage-asc">Vintage (old&rarr;new)</option>
-          <option value="Producer-asc">Producer A&ndash;Z</option>
-          <option value="Price-desc">Price (high&rarr;low)</option>
-          <option value="MyRating-desc">My rating (high&rarr;low)</option>
+          <option value="Vintage-desc">Vintage (new→old)</option>
+          <option value="Vintage-asc">Vintage (old→new)</option>
+          <option value="Producer-asc">Producer A–Z</option>
+          <option value="Price-desc">Price (high→low)</option>
+          <option value="MyRating-desc">My rating (high→low)</option>
         </select>
-        <button class="btn ghost" id="clear-filters-btn">Clear filters</button>
-        <button class="btn ghost" id="export-btn">Export to Excel</button>
         <button class="btn" id="add-btn">+ Add bottle</button>
       </div>
     </div>
@@ -396,11 +381,11 @@
         <table id="wine-table">
           <thead>
             <tr>
-              <th data-sort="Producer">Bottle</th>
-              <th data-sort="Vintage">Vintage</th>
-              <th data-sort="Region">Region</th>
-              <th data-sort="Price">Price</th>
-              <th data-sort="MyRating">My rating</th>
+              <th>Bottle</th>
+              <th>Vintage</th>
+              <th>Region</th>
+              <th>Price</th>
+              <th>My rating</th>
               <th>Status</th>
               <th></th>
             </tr>
@@ -417,9 +402,9 @@
     <div class="pager">
       <span id="pager-label">&nbsp;</span>
       <span>
-        <button id="prev-page">&larr; Prev</button>
+        <button id="prev-page">← Prev</button>
         &nbsp;&nbsp;
-        <button id="next-page">Next &rarr;</button>
+        <button id="next-page">Next →</button>
       </span>
     </div>
   </div>
@@ -440,7 +425,7 @@
         <div class="field"><label>Status</label>
           <select name="Status">
             <option value="Pending">Cellared (pending)</option>
-            <option value="Complete">Drank (complete)</option>
+            <option value="Complete">Uncorked (complete)</option>
           </select>
         </div>
         <div class="field"><label>Date purchased</label><input name="DatePurchased" type="date"></div>
@@ -448,12 +433,11 @@
         <div class="field"><label>Price ($)</label><input name="Price" type="number" step="0.01" min="0"></div>
         <div class="field"><label>Recommended by</label><input name="RecommendedBy"></div>
         <div class="field"><label>Date consumed</label><input name="DateConsumed" type="date"></div>
-        <div class="field"><label>My rating (0&ndash;100)</label><input name="MyRating" type="number" min="0" max="100"></div>
-        <div class="field"><label>Drink window &mdash; start</label><input name="DrinkStart"></div>
-        <div class="field"><label>Drink window &mdash; finish</label><input name="DrinkFinish"></div>
+        <div class="field"><label>My rating (0–100)</label><input name="MyRating" type="number" min="0" max="100"></div>
+        <div class="field"><label>Drink window — start</label><input name="DrinkStart"></div>
+        <div class="field"><label>Drink window — finish</label><input name="DrinkFinish"></div>
         <div class="field"><label>Robert Parker score</label><input name="RobertParker"></div>
         <div class="field"><label>Wine Spectator score</label><input name="Wine Spectator"></div>
-        <div class="field"><label>Wine Enthusiast (1&ndash;100)</label><input name="Wine Enthusiast" type="number" min="1" max="100"></div>
         <div class="field"><label>Rated by</label><input name="RatedBy"></div>
         <div class="field"><label>Additional rating</label><input name="Additional Rating"></div>
         <div class="field"><label>Color</label><input name="Color"></div>
@@ -485,7 +469,7 @@
   </div>
 </div>
 
-<footer class="site-footer">Don't Panic! &#128044;</footer>
+<footer class="site-footer">Don't Panic! 🍷</footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
@@ -494,10 +478,6 @@ import {
   setDoc, deleteDoc, addDoc
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-// ----------------------------------------------------------------------
-// 1. FIREBASE SETUP — replace this with your own project's config.
-//    Firebase console -> Project settings -> Your apps -> Web app -> Config
-// ----------------------------------------------------------------------
 const firebaseConfig = {
   apiKey: "AIzaSyBmDNDRZkjwXVfYKEEUIKxMJiYk3MR89cs",
   authDomain: "cellar-ledger.firebaseapp.com",
@@ -521,72 +501,32 @@ if (isConfigured) {
     console.error(err);
     document.getElementById("config-banner").style.display = "block";
     document.getElementById("config-banner").innerHTML =
-      "<strong>Couldn't reach Firestore.</strong> Check that Firestore is enabled in your Firebase project and that your security rules allow read/write, then reload this page.";
+      "<strong>Couldn't reach Firestore.</strong> Check that Firestore is enabled and security rules allow read/write, then reload.";
   });
 } else {
   document.getElementById("config-banner").style.display = "block";
 }
 
-// ----------------------------------------------------------------------
-// 2. STATE
-// ----------------------------------------------------------------------
 let searchTerm = "";
 let statusFilter = "All";
-let typeFilter = "All";
-let regionFilter = "All";
 let sortKey = "DatePurchased";
 let sortDir = "desc";
 let page = 0;
 const PAGE_SIZE = 40;
 let editingId = null;
 let pendingDeleteId = null;
-let knownTypes = [];
-let knownRegions = [];
-
 const searchableFields = ["Producer","Type","Vineyard","Region","Tasting Notes","PlacePurchased","RecommendedBy"];
-
-function refreshFilterOptions() {
-  const types = Array.from(new Set(wines.map(w => w.Type).filter(Boolean))).sort();
-  const regions = Array.from(new Set(wines.map(w => w.Region).filter(Boolean))).sort();
-
-  if (types.join("|") !== knownTypes.join("|")) {
-    knownTypes = types;
-    const sel = document.getElementById("type-filter");
-    const current = sel.value;
-    sel.innerHTML = '<option value="All">All types</option>' +
-      types.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
-    sel.value = types.includes(current) ? current : "All";
-    typeFilter = sel.value;
-  }
-  if (regions.join("|") !== knownRegions.join("|")) {
-    knownRegions = regions;
-    const sel = document.getElementById("region-filter");
-    const current = sel.value;
-    sel.innerHTML = '<option value="All">All regions</option>' +
-      regions.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join("");
-    sel.value = regions.includes(current) ? current : "All";
-    regionFilter = sel.value;
-  }
-}
 
 function filteredSorted() {
   let list = wines.slice();
-  if (statusFilter !== "All") {
-    list = list.filter(w => (w.Status || "Pending") === statusFilter);
-  }
-  if (typeFilter !== "All") {
-    list = list.filter(w => w.Type === typeFilter);
-  }
-  if (regionFilter !== "All") {
-    list = list.filter(w => w.Region === regionFilter);
-  }
+  if (statusFilter !== "All") list = list.filter(w => (w.Status || "Pending") === statusFilter);
   if (searchTerm.trim()) {
     const q = searchTerm.trim().toLowerCase();
     list = list.filter(w => searchableFields.some(f => (w[f] || "").toString().toLowerCase().includes(q)));
   }
   list.sort((a, b) => {
     let av = a[sortKey], bv = b[sortKey];
-    if (sortKey === "Price" || sortKey === "MyRating" || sortKey === "Vintage") {
+    if (["Price", "MyRating", "Vintage"].includes(sortKey)) {
       av = Number(av) || 0; bv = Number(bv) || 0;
     } else {
       av = (av || "").toString(); bv = (bv || "").toString();
@@ -599,22 +539,19 @@ function filteredSorted() {
 }
 
 function render() {
-  refreshFilterOptions();
   const list = filteredSorted();
-  const total = list.length;
-  const pending = list.filter(w => (w.Status || "Pending") === "Pending").length;
-  const complete = list.filter(w => w.Status === "Complete").length;
-  const rated = list.map(w => Number(w.MyRating)).filter(n => !isNaN(n) && n > 0);
-  const avgRating = rated.length ? Math.round(rated.reduce((a,b)=>a+b,0) / rated.length) : "\u2014";
+  const total = wines.length;
+  const pending = wines.filter(w => (w.Status || "Pending") === "Pending").length;
+  const complete = wines.filter(w => w.Status === "Complete").length;
+  const rated = wines.map(w => Number(w.MyRating)).filter(n => !isNaN(n) && n > 0);
+  const avgRating = rated.length ? Math.round(rated.reduce((a,b)=>a+b,0) / rated.length) : "—";
 
   document.getElementById("stat-total").textContent = total.toLocaleString();
   document.getElementById("stat-pending").textContent = pending.toLocaleString();
   document.getElementById("stat-complete").textContent = complete.toLocaleString();
   document.getElementById("stat-avgrating").textContent = avgRating;
   document.getElementById("bottle-count-sub").textContent =
-    total === wines.length
-      ? (total ? `${total.toLocaleString()} bottles logged, ${pending.toLocaleString()} still cellared` : "No bottles logged yet")
-      : `${total.toLocaleString()} of ${wines.length.toLocaleString()} bottles shown, ${pending.toLocaleString()} still cellared`;
+    total ? `${total.toLocaleString()} bottles logged, ${pending.toLocaleString()} still cellared` : "No bottles logged yet";
 
   const tbody = document.getElementById("wine-tbody");
   const emptyState = document.getElementById("empty-state");
@@ -632,13 +569,6 @@ function render() {
   table.style.display = "";
   emptyState.style.display = "none";
 
-  document.querySelectorAll("#wine-table thead th[data-sort]").forEach(th => {
-    th.classList.remove("active", "sort-asc", "sort-desc");
-    if (th.dataset.sort === sortKey) {
-      th.classList.add("active", sortDir === "asc" ? "sort-asc" : "sort-desc");
-    }
-  });
-
   const maxPage = Math.max(0, Math.ceil(list.length / PAGE_SIZE) - 1);
   if (page > maxPage) page = maxPage;
   const start = page * PAGE_SIZE;
@@ -647,31 +577,26 @@ function render() {
   tbody.innerHTML = pageItems.map(w => {
     const status = w.Status || "Pending";
     const sealClass = status === "Complete" ? "complete" : "pending";
-    const sealLabel = status === "Complete" ? "Drank" : "Cellared";
-    const price = w.Price != null && w.Price !== "" ? `$${Number(w.Price).toFixed(2)}` : "\u2014";
-    const rating = w.MyRating != null && w.MyRating !== "" ? w.MyRating : "\u2014";
+    const sealLabel = status === "Complete" ? "Uncorked" : "Cellared";
+    const price = w.Price != null && w.Price !== "" ? `$${Number(w.Price).toFixed(2)}` : "—";
+    const rating = w.MyRating != null && w.MyRating !== "" ? w.MyRating : "—";
     return `
       <tr data-id="${w._id}">
         <td>
           <div class="wine-name">${escapeHtml(w.Producer || "Unnamed bottle")}</div>
-          <div class="wine-sub">${escapeHtml(w.Type || "")}${w.Region ? " &middot; " + escapeHtml(w.Region) : ""}</div>
+          <div class="wine-sub">${escapeHtml(w.Type || "")}${w.Region ? " · " + escapeHtml(w.Region) : ""}</div>
         </td>
-        <td><span class="vintage-chip">${escapeHtml(w.Vintage || "\u2014")}</span></td>
-        <td>${escapeHtml(w.Region || "\u2014")}</td>
+        <td><span class="vintage-chip">${escapeHtml(w.Vintage || "—")}</span></td>
+        <td>${escapeHtml(w.Region || "—")}</td>
         <td class="num">${price}</td>
         <td class="num">${rating}</td>
         <td><span class="seal ${sealClass}">${sealLabel}</span></td>
-        <td>
-          <div class="rowactions">
-            <span class="iconbtn edit" title="Edit">&#9998;</span>
-            <span class="iconbtn del" title="Delete">&times;</span>
-          </div>
-        </td>
+        <td><div class="rowactions"><span class="iconbtn edit" title="Edit">✎</span><span class="iconbtn del" title="Delete">×</span></div></td>
       </tr>`;
   }).join("");
 
   document.getElementById("pager-label").textContent =
-    `Showing ${start + 1}\u2013${Math.min(start + PAGE_SIZE, list.length)} of ${list.length.toLocaleString()}`;
+    `Showing ${start + 1}–${Math.min(start + PAGE_SIZE, list.length)} of ${list.length.toLocaleString()}`;
   document.getElementById("prev-page").disabled = page === 0;
   document.getElementById("next-page").disabled = page >= maxPage;
 
@@ -684,12 +609,9 @@ function render() {
 }
 
 function escapeHtml(v) {
-  return String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  return String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 }
 
-// ----------------------------------------------------------------------
-// 3. TOOLBAR EVENTS
-// ----------------------------------------------------------------------
 document.getElementById("search").addEventListener("input", (e) => {
   searchTerm = e.target.value; page = 0; render();
 });
@@ -705,96 +627,11 @@ document.getElementById("sort-select").addEventListener("change", (e) => {
   const [key, dir] = e.target.value.split("-");
   sortKey = key; sortDir = dir; render();
 });
-document.getElementById("type-filter").addEventListener("change", (e) => {
-  typeFilter = e.target.value; page = 0; render();
-});
-document.getElementById("region-filter").addEventListener("change", (e) => {
-  regionFilter = e.target.value; page = 0; render();
-});
-document.getElementById("clear-filters-btn").addEventListener("click", () => {
-  searchTerm = "";
-  statusFilter = "All";
-  typeFilter = "All";
-  regionFilter = "All";
-  sortKey = "DatePurchased";
-  sortDir = "desc";
-  page = 0;
-
-  document.getElementById("search").value = "";
-  document.querySelectorAll("#status-filters .chip").forEach(c => c.classList.remove("active"));
-  document.querySelector('#status-filters .chip[data-status="All"]').classList.add("active");
-  document.getElementById("type-filter").value = "All";
-  document.getElementById("region-filter").value = "All";
-  document.getElementById("sort-select").value = "DatePurchased-desc";
-
-  render();
-});
-document.querySelectorAll("#wine-table thead th[data-sort]").forEach(th => {
-  th.addEventListener("click", () => {
-    const key = th.dataset.sort;
-    if (sortKey === key) {
-      sortDir = sortDir === "asc" ? "desc" : "asc";
-    } else {
-      sortKey = key;
-      sortDir = key === "Producer" || key === "Region" ? "asc" : "desc";
-    }
-    const matchingOption = `${sortKey}-${sortDir}`;
-    const sortSelect = document.getElementById("sort-select");
-    if (Array.from(sortSelect.options).some(o => o.value === matchingOption)) {
-      sortSelect.value = matchingOption;
-    }
-    render();
-  });
-});
 document.getElementById("prev-page").addEventListener("click", () => { page = Math.max(0, page - 1); render(); });
 document.getElementById("next-page").addEventListener("click", () => { page += 1; render(); });
 
-document.getElementById("export-btn").addEventListener("click", () => {
-  if (typeof XLSX === "undefined") {
-    alert("The Excel export library hasn't finished loading yet. Give it a second and try again.");
-    return;
-  }
-  const list = filteredSorted();
-  if (!list.length) {
-    alert("No bottles match the current search and filters, so there's nothing to export.");
-    return;
-  }
-  const rows = list.map(w => ({
-    "Producer": w.Producer || "",
-    "Vineyard": w.Vineyard || "",
-    "Type": w.Type || "",
-    "Region": w.Region || "",
-    "Vintage": w.Vintage || "",
-    "Status": w.Status || "Pending",
-    "Date Purchased": w.DatePurchased || "",
-    "Place Purchased": w.PlacePurchased || "",
-    "Price": w.Price != null && w.Price !== "" ? Number(w.Price) : "",
-    "Recommended By": w.RecommendedBy || "",
-    "Date Consumed": w.DateConsumed || "",
-    "My Rating": w.MyRating != null && w.MyRating !== "" ? Number(w.MyRating) : "",
-    "Rated By": w.RatedBy || "",
-    "Robert Parker": w.RobertParker || "",
-    "Wine Spectator": w["Wine Spectator"] || "",
-    "Wine Enthusiast": w["Wine Enthusiast"] || "",
-    "Color": w.Color || "",
-    "Nose": w.Nose || "",
-    "Tasting Notes": w["Tasting Notes"] || "",
-    "Finish": w.Finish || ""
-  }));
-  const ws = XLSX.utils.json_to_sheet(rows);
-  ws["!cols"] = Object.keys(rows[0]).map(k => ({ wch: Math.min(Math.max(k.length, 12), 40) }));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Pour Ledger");
-  const stamp = new Date().toISOString().slice(0, 10);
-  XLSX.writeFile(wb, `pour-ledger-export-${stamp}.xlsx`);
-});
-
-// ----------------------------------------------------------------------
-// 4. ADD / EDIT MODAL
-// ----------------------------------------------------------------------
 const formOverlay = document.getElementById("form-overlay");
 const wineForm = document.getElementById("wine-form");
-
 document.getElementById("add-btn").addEventListener("click", () => openAdd());
 document.getElementById("form-close").addEventListener("click", closeForm);
 document.getElementById("form-cancel").addEventListener("click", closeForm);
@@ -827,7 +664,7 @@ function closeForm() {
 wineForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!isConfigured) {
-    alert("Add your Firebase config at the bottom of this file before saving bottles.");
+    alert("Add your Firebase config before saving bottles.");
     return;
   }
   const data = {};
@@ -848,13 +685,10 @@ wineForm.addEventListener("submit", async (e) => {
     closeForm();
   } catch (err) {
     console.error(err);
-    alert("Couldn't save that bottle. Check the browser console for details.");
+    alert("Error saving. Check console.");
   }
 });
 
-// ----------------------------------------------------------------------
-// 5. DELETE CONFIRM
-// ----------------------------------------------------------------------
 const confirmOverlay = document.getElementById("confirm-overlay");
 document.getElementById("confirm-cancel").addEventListener("click", () => confirmOverlay.classList.remove("open"));
 confirmOverlay.addEventListener("click", (e) => { if (e.target === confirmOverlay) confirmOverlay.classList.remove("open"); });
@@ -863,7 +697,7 @@ function openConfirm(id) {
   const w = wines.find(x => x._id === id);
   pendingDeleteId = id;
   document.getElementById("confirm-text").textContent =
-    w ? `"${w.Producer || "This bottle"}" will be removed from the ledger for good.` : "This can't be undone.";
+    w ? `"${w.Producer || "This bottle"}" will be removed.` : "This can't be undone.";
   confirmOverlay.classList.add("open");
 }
 
@@ -873,7 +707,7 @@ document.getElementById("confirm-delete").addEventListener("click", async () => 
     await deleteDoc(doc(db, "wines", pendingDeleteId));
   } catch (err) {
     console.error(err);
-    alert("Couldn't delete that bottle. Check the browser console for details.");
+    alert("Error deleting. Check console.");
   }
   confirmOverlay.classList.remove("open");
 });
