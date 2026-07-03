@@ -385,6 +385,7 @@
           <option value="Price-desc">Price (high&rarr;low)</option>
           <option value="MyRating-desc">My rating (high&rarr;low)</option>
         </select>
+        <button class="btn ghost" id="clear-filters-btn">Clear filters</button>
         <button class="btn ghost" id="export-btn">Export to Excel</button>
         <button class="btn" id="add-btn">+ Add bottle</button>
       </div>
@@ -452,6 +453,7 @@
         <div class="field"><label>Drink window &mdash; finish</label><input name="DrinkFinish"></div>
         <div class="field"><label>Robert Parker score</label><input name="RobertParker"></div>
         <div class="field"><label>Wine Spectator score</label><input name="Wine Spectator"></div>
+        <div class="field"><label>Wine Enthusiast (1&ndash;100)</label><input name="Wine Enthusiast" type="number" min="1" max="100"></div>
         <div class="field"><label>Rated by</label><input name="RatedBy"></div>
         <div class="field"><label>Additional rating</label><input name="Additional Rating"></div>
         <div class="field"><label>Color</label><input name="Color"></div>
@@ -709,6 +711,24 @@ document.getElementById("type-filter").addEventListener("change", (e) => {
 document.getElementById("region-filter").addEventListener("change", (e) => {
   regionFilter = e.target.value; page = 0; render();
 });
+document.getElementById("clear-filters-btn").addEventListener("click", () => {
+  searchTerm = "";
+  statusFilter = "All";
+  typeFilter = "All";
+  regionFilter = "All";
+  sortKey = "DatePurchased";
+  sortDir = "desc";
+  page = 0;
+
+  document.getElementById("search").value = "";
+  document.querySelectorAll("#status-filters .chip").forEach(c => c.classList.remove("active"));
+  document.querySelector('#status-filters .chip[data-status="All"]').classList.add("active");
+  document.getElementById("type-filter").value = "All";
+  document.getElementById("region-filter").value = "All";
+  document.getElementById("sort-select").value = "DatePurchased-desc";
+
+  render();
+});
 document.querySelectorAll("#wine-table thead th[data-sort]").forEach(th => {
   th.addEventListener("click", () => {
     const key = th.dataset.sort;
@@ -755,6 +775,7 @@ document.getElementById("export-btn").addEventListener("click", () => {
     "Rated By": w.RatedBy || "",
     "Robert Parker": w.RobertParker || "",
     "Wine Spectator": w["Wine Spectator"] || "",
+    "Wine Enthusiast": w["Wine Enthusiast"] || "",
     "Color": w.Color || "",
     "Nose": w.Nose || "",
     "Tasting Notes": w["Tasting Notes"] || "",
