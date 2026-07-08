@@ -302,6 +302,9 @@
     color:var(--ink-soft); font-size:13.5px; font-family:'Inter', sans-serif; pointer-events:none;
   }
   .field.currency input{ padding-left:1.5rem; }
+  .field input.input-error{ border-color:var(--danger); }
+  .field input.input-error:focus{ box-shadow:0 0 0 3px rgba(124,51,51,0.15); }
+  .field-error-msg{ display:block; color:var(--danger); font-size:11.5px; margin-top:0.3rem; }
   .modal-actions{ display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.3rem; }
   .modal-close{ position:absolute; top:1.1rem; right:1.2rem; background:none; border:none; font-size:1.3rem; color:var(--ink-soft); cursor:pointer; }
   .modal-wrap{ position:relative; }
@@ -451,15 +454,15 @@
           <div class="input-wrap"><span class="currency-prefix">$</span><input name="Price" type="number" step="0.01" min="0"></div>
         </div>
         <div class="field"><label>Recommended by</label><input name="RecommendedBy"></div>
-        <div class="field"><label>Score</label><input class="score-input" name="RobertParker" type="number" min="1" max="100" placeholder="Robert Parker"></div>
-        <div class="field"><label>Score</label><input class="score-input" name="Wine Spectator" type="number" min="1" max="100" placeholder="Wine Spectator"></div>
-        <div class="field"><label>Score</label><input class="score-input" name="Wine Enthusiast" type="number" min="1" max="100" placeholder="Wine Enthusiast"></div>
+        <div class="field"><label>Score</label><input class="rating-input" name="RobertParker" type="number" min="1" max="100" placeholder="Robert Parker"></div>
+        <div class="field"><label>Score</label><input class="rating-input" name="Wine Spectator" type="number" min="1" max="100" placeholder="Wine Spectator"></div>
+        <div class="field"><label>Score</label><input class="rating-input" name="Wine Enthusiast" type="number" min="1" max="100" placeholder="Wine Enthusiast"></div>
         <div class="field"><label>Rated by</label><input name="RatedBy"></div>
         <div class="field"><label>Additional rating</label><input name="Additional Rating"></div>
         <div class="field"><label>Date consumed</label><input name="DateConsumed" type="date"></div>
-        <div class="field"><label>My rating (0&ndash;100)</label><input name="MyRating" type="number" min="0" max="100"></div>
+        <div class="field"><label>My rating (0&ndash;100)</label><input class="rating-input" name="MyRating" type="number" min="0" max="100"></div>
         <div class="field"><label>Other name</label><input name="OtherName"></div>
-        <div class="field"><label>Other rating (0&ndash;100)</label><input name="OtherRating" type="number" min="0" max="100"></div>
+        <div class="field"><label>Other rating (0&ndash;100)</label><input class="rating-input" name="OtherRating" type="number" min="0" max="100"></div>
         <div class="field"><label>Color</label><input name="Color"></div>
         <div class="field"><label>Nose</label><input name="Nose"></div>
         <div class="field full"><label>Tasting notes</label><textarea name="Tasting Notes"></textarea></div>
@@ -812,16 +815,38 @@ document.getElementById("form-close").addEventListener("click", closeForm);
 document.getElementById("form-cancel").addEventListener("click", closeForm);
 formOverlay.addEventListener("click", (e) => { if (e.target === formOverlay) closeForm(); });
 
-document.querySelectorAll(".score-input").forEach(inp => {
+document.querySelectorAll(".rating-input").forEach(inp => {
+  inp.addEventListener("blur", () => {
+    if (inp.value !== "" && Number(inp.value) > 100) {
+      inp.classList.add("input-error");
+      let msg = inp.parentElement.querySelector(".field-error-msg");
+      if (!msg) {
+        msg = document.createElement("span");
+        msg.className = "field-error-msg";
+        inp.insertAdjacentElement("afterend", msg);
+      }
+      msg.textContent = "Max value is 100";
+    }
+  });
   inp.addEventListener("input", () => {
-    if (inp.value !== "" && Number(inp.value) > 100) inp.value = "100";
+    if (inp.value === "" || Number(inp.value) <= 100) {
+      inp.classList.remove("input-error");
+      const msg = inp.parentElement.querySelector(".field-error-msg");
+      if (msg) msg.remove();
+    }
   });
 });
+
+function clearRatingErrors() {
+  wineForm.querySelectorAll(".input-error").forEach(el => el.classList.remove("input-error"));
+  wineForm.querySelectorAll(".field-error-msg").forEach(el => el.remove());
+}
 
 function openAdd() {
   editingId = null;
   document.getElementById("form-title").textContent = "Add bottle";
   wineForm.reset();
+  clearRatingErrors();
   wineForm.querySelector('[name="Status"]').value = "Pending";
   formOverlay.classList.add("open");
 }
@@ -832,6 +857,7 @@ function openEdit(id) {
   editingId = id;
   document.getElementById("form-title").textContent = `Edit ${w.Producer || "bottle"}`;
   wineForm.reset();
+  clearRatingErrors();
   Array.from(wineForm.elements).forEach(el => {
     if (el.name && w[el.name] != null) el.value = w[el.name];
   });
