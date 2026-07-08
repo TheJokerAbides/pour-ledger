@@ -296,6 +296,12 @@
   }
   .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--ink); box-shadow:0 0 0 3px rgba(24,24,26,0.10); }
   .field textarea{ resize:vertical; min-height:56px; }
+  .field.currency .input-wrap{ position:relative; }
+  .field.currency .currency-prefix{
+    position:absolute; left:0.65rem; top:50%; transform:translateY(-50%);
+    color:var(--ink-soft); font-size:13.5px; font-family:'Inter', sans-serif; pointer-events:none;
+  }
+  .field.currency input{ padding-left:1.5rem; }
   .modal-actions{ display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.3rem; }
   .modal-close{ position:absolute; top:1.1rem; right:1.2rem; background:none; border:none; font-size:1.3rem; color:var(--ink-soft); cursor:pointer; }
   .modal-wrap{ position:relative; }
@@ -434,32 +440,36 @@
       <div class="form-grid">
         <div class="field"><label>Producer</label><input name="Producer" placeholder="e.g. Sequoia Grove"></div>
         <div class="field"><label>Vineyard</label><input name="Vineyard"></div>
-        <div class="field"><label>Type / varietal</label><input name="Type" placeholder="e.g. Cabernet Sauvignon"></div>
         <div class="field"><label>Region</label><input name="Region"></div>
+        <div class="field"><label>Type / varietal</label><input name="Type" placeholder="e.g. Cabernet Sauvignon"></div>
         <div class="field"><label>Vintage</label><input name="Vintage" type="number" min="1900" max="2100"></div>
-        <div class="field"><label>Status</label>
+        <div class="field"><label>Drink window &mdash; start</label><input name="DrinkStart"></div>
+        <div class="field"><label>Drink window &mdash; finish</label><input name="DrinkFinish"></div>
+        <div class="field"><label>Date purchased</label><input name="DatePurchased" type="date"></div>
+        <div class="field"><label>Place purchased</label><input name="PlacePurchased"></div>
+        <div class="field currency"><label>Price</label>
+          <div class="input-wrap"><span class="currency-prefix">$</span><input name="Price" type="number" step="0.01" min="0"></div>
+        </div>
+        <div class="field"><label>Recommended by</label><input name="RecommendedBy"></div>
+        <div class="field"><label>Score</label><input class="score-input" name="RobertParker" type="number" min="1" max="100" placeholder="Robert Parker"></div>
+        <div class="field"><label>Score</label><input class="score-input" name="Wine Spectator" type="number" min="1" max="100" placeholder="Wine Spectator"></div>
+        <div class="field"><label>Score</label><input class="score-input" name="Wine Enthusiast" type="number" min="1" max="100" placeholder="Wine Enthusiast"></div>
+        <div class="field"><label>Rated by</label><input name="RatedBy"></div>
+        <div class="field"><label>Additional rating</label><input name="Additional Rating"></div>
+        <div class="field"><label>Date consumed</label><input name="DateConsumed" type="date"></div>
+        <div class="field"><label>My rating (0&ndash;100)</label><input name="MyRating" type="number" min="0" max="100"></div>
+        <div class="field"><label>Other name</label><input name="OtherName"></div>
+        <div class="field"><label>Other rating (0&ndash;100)</label><input name="OtherRating" type="number" min="0" max="100"></div>
+        <div class="field"><label>Color</label><input name="Color"></div>
+        <div class="field"><label>Nose</label><input name="Nose"></div>
+        <div class="field full"><label>Tasting notes</label><textarea name="Tasting Notes"></textarea></div>
+        <div class="field full"><label>Finish</label><input name="Finish"></div>
+        <div class="field full"><label>Status</label>
           <select name="Status">
             <option value="Pending">Cellared (pending)</option>
             <option value="Complete">Drank (complete)</option>
           </select>
         </div>
-        <div class="field"><label>Date purchased</label><input name="DatePurchased" type="date"></div>
-        <div class="field"><label>Place purchased</label><input name="PlacePurchased"></div>
-        <div class="field"><label>Price ($)</label><input name="Price" type="number" step="0.01" min="0"></div>
-        <div class="field"><label>Recommended by</label><input name="RecommendedBy"></div>
-        <div class="field"><label>Date consumed</label><input name="DateConsumed" type="date"></div>
-        <div class="field"><label>My rating (0&ndash;100)</label><input name="MyRating" type="number" min="0" max="100"></div>
-        <div class="field"><label>Drink window &mdash; start</label><input name="DrinkStart"></div>
-        <div class="field"><label>Drink window &mdash; finish</label><input name="DrinkFinish"></div>
-        <div class="field"><label>Robert Parker score</label><input name="RobertParker"></div>
-        <div class="field"><label>Wine Spectator score</label><input name="Wine Spectator"></div>
-        <div class="field"><label>Wine Enthusiast (1&ndash;100)</label><input name="Wine Enthusiast" type="number" min="1" max="100"></div>
-        <div class="field"><label>Rated by</label><input name="RatedBy"></div>
-        <div class="field"><label>Additional rating</label><input name="Additional Rating"></div>
-        <div class="field"><label>Color</label><input name="Color"></div>
-        <div class="field"><label>Nose</label><input name="Nose"></div>
-        <div class="field full"><label>Tasting notes</label><textarea name="Tasting Notes"></textarea></div>
-        <div class="field full"><label>Finish</label><input name="Finish"></div>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn ghost" id="form-cancel">Cancel</button>
@@ -772,6 +782,8 @@ document.getElementById("export-btn").addEventListener("click", () => {
     "Recommended By": w.RecommendedBy || "",
     "Date Consumed": w.DateConsumed || "",
     "My Rating": w.MyRating != null && w.MyRating !== "" ? Number(w.MyRating) : "",
+    "Other Name": w.OtherName || "",
+    "Other Rating": w.OtherRating != null && w.OtherRating !== "" ? Number(w.OtherRating) : "",
     "Rated By": w.RatedBy || "",
     "Robert Parker": w.RobertParker || "",
     "Wine Spectator": w["Wine Spectator"] || "",
@@ -799,6 +811,12 @@ document.getElementById("add-btn").addEventListener("click", () => openAdd());
 document.getElementById("form-close").addEventListener("click", closeForm);
 document.getElementById("form-cancel").addEventListener("click", closeForm);
 formOverlay.addEventListener("click", (e) => { if (e.target === formOverlay) closeForm(); });
+
+document.querySelectorAll(".score-input").forEach(inp => {
+  inp.addEventListener("input", () => {
+    if (inp.value !== "" && Number(inp.value) > 100) inp.value = "100";
+  });
+});
 
 function openAdd() {
   editingId = null;
