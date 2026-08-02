@@ -372,6 +372,23 @@
         <div class="field"><label>Fairways hit</label><input name="FairwaysHit" placeholder="e.g. 9/14"></div>
         <div class="field"><label>Greens in regulation</label><input name="GIR" placeholder="e.g. 7/18"></div>
         <div class="field"><label>Putts</label><input name="Putts" type="number" min="0" max="80"></div>
+        <div class="field"><label>3-putts</label><input name="ThreePutts" type="number" min="0" max="18"></div>
+        <div class="field"><label>Birdies</label><input name="Birdies" type="number" min="0" max="18"></div>
+        <div class="field"><label>Pars</label><input name="Pars" type="number" min="0" max="18"></div>
+        <div class="field"><label>Bogeys</label><input name="Bogeys" type="number" min="0" max="18"></div>
+        <div class="field"><label>Double bogeys+</label><input name="DoubleBogeysPlus" type="number" min="0" max="18"></div>
+        <div class="field"><label>Penalty strokes</label>
+          <select name="PenaltyStrokes">
+            <option value=""></option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4+">4+</option>
+          </select>
+        </div>
+        <div class="field"><label>Penalty details</label><input name="PenaltyDetails" placeholder="e.g. Water on 14, OB on 7"></div>
+        <div class="field"><label>Handicap index</label><input name="HandicapIndex" type="number" step="0.1" min="0" max="54"></div>
         <div class="field"><label>Trophy</label>
           <select name="Trophy">
             <option value=""></option>
@@ -470,7 +487,7 @@ let editingId = null;
 let pendingDeleteId = null;
 let knownCourses = [];
 
-const searchableFields = ["Course","State","CoPlayers","Weather","Comments"];
+const searchableFields = ["Course","State","CoPlayers","Weather","Comments","PenaltyDetails"];
 
 function refreshFilterOptions() {
   const courses = Array.from(new Set(rounds.map(r => r.Course).filter(Boolean))).sort();
@@ -687,6 +704,14 @@ document.getElementById("export-btn").addEventListener("click", () => {
     "Fairways Hit": r.FairwaysHit || "",
     "Greens in Regulation": r.GIR || "",
     "Putts": r.Putts || "",
+    "3-Putts": r.ThreePutts || "",
+    "Birdies": r.Birdies || "",
+    "Pars": r.Pars || "",
+    "Bogeys": r.Bogeys || "",
+    "Double Bogeys+": r.DoubleBogeysPlus || "",
+    "Penalty Strokes": r.PenaltyStrokes || "",
+    "Penalty Details": r.PenaltyDetails || "",
+    "Handicap Index": r.HandicapIndex || "",
     "Trophy": r.Trophy || "",
     "Comments": r.Comments || "",
     "Status": r.Status || "Pending"
