@@ -63,6 +63,7 @@
     display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
   }
   .brand{ display:flex; align-items:center; gap:0.7rem; }
+  .brand a{ display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
   .brand svg{ width:22px; height:22px; flex-shrink:0; }
   .wordmark{
     display:flex;
@@ -88,6 +89,8 @@
     color:var(--silver-light);
   }
   .subhead{ font-size:13px; color:#9C9CA1; margin:0; }
+  .hub-link{ font-size:12px; color:var(--silver); text-decoration:none; border:1px solid var(--border-strong); border-radius:999px; padding:5px 12px; opacity:0.85; }
+  .hub-link:hover{ background:rgba(255,255,255,0.08); }
 
   #config-banner{
     background:var(--graphite-deep);
@@ -339,19 +342,24 @@
 <header class="navbar">
   <div class="navbar-inner">
     <div class="brand">
-      <svg viewBox="0 0 24 24" fill="none">
-        <defs>
-          <linearGradient id="markGrad" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#EDEDEF"/>
-            <stop offset="1" stop-color="#88888E"/>
-          </linearGradient>
-        </defs>
-        <path d="M7 3h10l-1 7a4 4 0 0 1-8 0L7 3z" stroke="url(#markGrad)" stroke-width="1.1"/>
-        <path d="M12 14v6M9 20h6" stroke="url(#markGrad)" stroke-width="1.1"/>
-      </svg>
-      <h1 class="wordmark"><span class="wm-eyebrow">POUR</span><span class="wm-rule"></span><span class="wm-serif">Ledger</span></h1>
+      <a href="index.html" title="Back to hub">
+        <svg viewBox="0 0 24 24" fill="none">
+          <defs>
+            <linearGradient id="markGrad" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#EDEDEF"/>
+              <stop offset="1" stop-color="#88888E"/>
+            </linearGradient>
+          </defs>
+          <path d="M7 3h10l-1 7a4 4 0 0 1-8 0L7 3z" stroke="url(#markGrad)" stroke-width="1.1"/>
+          <path d="M12 14v6M9 20h6" stroke="url(#markGrad)" stroke-width="1.1"/>
+        </svg>
+        <h1 class="wordmark"><span class="wm-eyebrow">POUR</span><span class="wm-rule"></span><span class="wm-serif">Ledger</span></h1>
+      </a>
     </div>
-    <p class="subhead" id="bottle-count-sub">Loading your collection&hellip;</p>
+    <div style="display:flex; align-items:center; gap:0.9rem;">
+      <p class="subhead" id="bottle-count-sub">Loading your collection&hellip;</p>
+      <a class="hub-link" href="index.html">&larr; Hub</a>
+    </div>
   </div>
 </header>
 
