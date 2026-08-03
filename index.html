@@ -58,6 +58,8 @@
   .wm-eyebrow{ font-weight:600; font-size:0.78rem; letter-spacing:0.34em; color:var(--silver); }
   .wm-rule{ width:1px; height:13px; background:var(--border-strong); opacity:0.35; display:inline-block; }
   .wm-serif{ font-family:'Bodoni Moda', serif; font-style:italic; font-weight:500; font-size:1.7rem; color:var(--silver-light); }
+  .hub-link{ font-size:12px; color:var(--silver); text-decoration:none; border:1px solid var(--border-strong); border-radius:999px; padding:5px 12px; opacity:0.85; }
+  .hub-link:hover{ background:rgba(255,255,255,0.08); }
 
   .wrap{ max-width:960px; width:100%; padding:0 1.5rem 5rem; text-align:center; }
   .eyebrow{ font-size:0.78rem; letter-spacing:0.34em; color:var(--silver); font-weight:600; margin-bottom:0.8rem; }
@@ -129,6 +131,11 @@
     </svg>
     <h1 class="wordmark"><span class="wm-eyebrow">LIFE</span><span class="wm-rule"></span><span class="wm-serif">Ledger</span></h1>
   </div>
+  <div class="navbar-inner" style="margin-top:-0.6rem; justify-content:flex-end;">
+    <button class="hub-link" id="google-signin-btn" style="cursor:pointer; font-family:inherit;">Sign in with Google</button>
+    <span class="hub-link" id="user-email" style="display:none;"></span>
+    <button class="hub-link" id="signout-btn" style="display:none; cursor:pointer; background:none; font-family:inherit;">Sign out</button>
+  </div>
 </header>
 
 <div class="wrap">
@@ -161,6 +168,52 @@
 </div>
 
 <footer class="site-footer">Don't Panic! &#128044;</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCQf87JX44sQLLS09nEyHzPM_-pX9h4H7A",
+  authDomain: "lifeledger-clone.firebaseapp.com",
+  projectId: "lifeledger-clone",
+  storageBucket: "lifeledger-clone.firebasestorage.app",
+  messagingSenderId: "619592204709",
+  appId: "1:619592204709:web:d8e4532bebd749ec3c684c"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const signinBtn = document.getElementById("google-signin-btn");
+const signoutBtn = document.getElementById("signout-btn");
+const userEmailEl = document.getElementById("user-email");
+
+signinBtn.addEventListener("click", async () => {
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch (err) {
+    console.error(err);
+    alert("Couldn't sign in. Check the browser console for details.");
+  }
+});
+signoutBtn.addEventListener("click", () => signOut(auth));
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    signinBtn.style.display = "none";
+    signoutBtn.style.display = "";
+    userEmailEl.style.display = "";
+    userEmailEl.textContent = user.email || "Signed in";
+  } else {
+    signinBtn.style.display = "";
+    signoutBtn.style.display = "none";
+    userEmailEl.style.display = "none";
+  }
+});
+</script>
 
 </body>
 </html>
