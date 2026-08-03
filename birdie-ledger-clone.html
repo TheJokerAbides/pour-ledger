@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Birdie Ledger</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%2309090A'/%3E%3Cpath d='M6 20V4' stroke='%23E4E4E6' stroke-width='1.7' stroke-linecap='round'/%3E%3Cpath d='M6 4l11 3.2L6 10.4' fill='none' stroke='%23E4E4E6' stroke-width='1.7' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="shortcut icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%2309090A'/%3E%3Cpath d='M6 20V4' stroke='%23E4E4E6' stroke-width='1.7' stroke-linecap='round'/%3E%3Cpath d='M6 4l11 3.2L6 10.4' fill='none' stroke='%23E4E4E6' stroke-width='1.7' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%2309090A'/%3E%3Cpath d='M6 20V4' stroke='%23E4E4E6' stroke-width='1.7' stroke-linecap='round'/%3E%3Cpath d='M6 4l11 3.2L6 10.4' fill='none' stroke='%23E4E4E6' stroke-width='1.7' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js" defer></script>
+<style>
+  :root{
+    --void:#09090A;
+    --slat-a:#0D0D0F;
+    --slat-b:#1B1B1E;
+    --hairline:rgba(255,255,255,0.05);
+    --surface:#F6F6F5;
+    --surface-2:#ECECEA;
+    --surface-3:#E0E0DD;
+    --ink:#18181A;
+    --ink-soft:#6B6B70;
+    --graphite:#1F1F22;
+    --graphite-deep:#0E0E10;
+    --silver:#9B9CA2;
+    --silver-light:#E4E4E6;
+    --success:#3E6A54;
+    --success-bg:#E6ECE8;
+    --pending:#6E6247;
+    --pending-bg:#EEEAE0;
+    --danger:#7C3333;
+    --border:#DBDBD8;
+    --border-strong:#C6C6C2;
+    --radius:0.5rem;
+    --shadow-sm:0 1px 2px rgba(0,0,0,0.10);
+    --shadow-md:0 14px 34px -10px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.18);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background-color:var(--void);
+    background-image:
+      repeating-linear-gradient(128deg, var(--hairline) 0px, var(--hairline) 1px, transparent 1px, transparent 3px),
+      repeating-linear-gradient(128deg, var(--slat-b) 0px, var(--slat-b) 22px, var(--slat-a) 22px, var(--slat-a) 46px),
+      radial-gradient(ellipse 1100px 520px at 50% 0%, rgba(255,255,255,0.05), transparent 72%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    font-size:15px;
+    line-height:1.55;
+    min-height:100vh;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 1.5rem 4rem;}
+
+  header.navbar{
+    background:linear-gradient(180deg, rgba(0,0,0,0.22), transparent);
+    border-bottom:1px solid rgba(255,255,255,0.09);
+    margin-bottom:2rem;
+    padding:1.2rem 0;
+  }
+  .navbar-inner{
+    max-width:1180px;margin:0 auto;padding:0 1.5rem;
+    display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:0.7rem; }
+  .brand a{ display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+  .brand svg{ width:22px; height:22px; flex-shrink:0; }
+  .wordmark{ display:flex; align-items:baseline; gap:0.6rem; margin:0; }
+  .wm-eyebrow{ font-family:'Inter', sans-serif; font-weight:600; font-size:0.78rem; letter-spacing:0.34em; color:var(--silver); }
+  .wm-rule{ width:1px; height:13px; background:var(--border-strong); opacity:0.35; display:inline-block; }
+  .wm-serif{ font-family:'Bodoni Moda', serif; font-style:italic; font-weight:500; font-optical-sizing:auto; font-size:1.7rem; letter-spacing:0.005em; color:var(--silver-light); }
+  .subhead{ font-size:13px; color:#9C9CA1; margin:0; }
+  .hub-link{ font-size:12px; color:var(--silver); text-decoration:none; border:1px solid var(--border-strong); border-radius:999px; padding:5px 12px; opacity:0.85; }
+  .hub-link:hover{ background:rgba(255,255,255,0.08); }
+
+  #config-banner{
+    background:var(--graphite-deep);
+    border:1px solid var(--border-strong);
+    color:var(--silver-light);
+    border-radius:var(--radius);
+    padding:0.9rem 1.1rem;
+    font-size:13.5px;
+    margin-bottom:1.5rem;
+    line-height:1.55;
+    display:none;
+  }
+  #config-banner code{background:rgba(255,255,255,0.08); padding:1px 5px; border-radius:3px; font-family:'IBM Plex Mono', monospace;}
+
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:0.85rem;
+    margin-bottom:1.5rem;
+  }
+  .stat{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-sm);
+    padding:0.9rem 1.1rem;
+  }
+  .stat .num{ font-family:'IBM Plex Mono', monospace; font-size:1.55rem; font-weight:500; color:var(--graphite); display:block; line-height:1.2; }
+  .stat .label{ font-size:11.5px; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink-soft); }
+
+  .panel{
+    background:var(--surface);
+    border-radius:0.75rem;
+    border:1px solid var(--border);
+    box-shadow:var(--shadow-md);
+    overflow:hidden;
+  }
+  .panel-header{
+    padding:1.1rem 1.25rem;
+    border-bottom:1px solid var(--border);
+    background:var(--surface-2);
+  }
+  .panel-body{ padding:0.25rem 1.25rem 0.5rem; }
+
+  .toolbar{ display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
+  .toolbar input[type=search]{
+    flex:1 1 220px; min-width:180px; padding:0.55rem 0.8rem;
+    border:1px solid var(--border-strong); border-radius:var(--radius);
+    background:#fff; font-size:14px; color:var(--ink); font-family:'Inter', sans-serif;
+  }
+  .toolbar input[type=search]:focus{ outline:none; border-color:var(--ink); box-shadow:0 0 0 3px rgba(24,24,26,0.10); }
+  .chip-group{ display:flex; border:1px solid var(--border-strong); border-radius:var(--radius); overflow:hidden; }
+  .chip{
+    font-family:'Inter', sans-serif; font-weight:500; font-size:12.5px; padding:0.5rem 0.85rem;
+    border:none; border-right:1px solid var(--border-strong); background:#fff; color:var(--ink-soft);
+    cursor:pointer; user-select:none;
+  }
+  .chip:last-child{ border-right:none; }
+  .chip.active{ background:var(--graphite); color:#fff; }
+  select.sortsel{
+    padding:0.55rem 0.6rem; border:1px solid var(--border-strong); border-radius:var(--radius);
+    background:#fff; font-size:13px; color:var(--ink); font-family:'Inter', sans-serif;
+  }
+  .btn{
+    font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px; padding:0.55rem 1.05rem;
+    border-radius:var(--radius); border:1px solid var(--graphite); background:var(--graphite);
+    color:#fff; cursor:pointer; box-shadow:var(--shadow-sm);
+  }
+  .btn:hover{ background:var(--graphite-deep); border-color:var(--graphite-deep); }
+  .btn.ghost{ background:#fff; color:var(--ink-soft); border-color:var(--border-strong); box-shadow:none; }
+  .btn.ghost:hover{ background:var(--surface-2); color:var(--ink); }
+  .btn.small{ padding:0.3rem 0.6rem; font-size:12px; }
+  .btn.danger{ border-color:var(--danger); background:var(--danger); }
+  .btn.danger:hover{ background:#5E2626; border-color:#5E2626; }
+
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  thead th{
+    text-align:left; font-family:'Inter', sans-serif; font-size:11.5px; font-weight:600;
+    letter-spacing:0.04em; text-transform:uppercase; color:var(--ink-soft); background:var(--surface-2);
+    border-bottom:1px solid var(--border); padding:0.7rem 0.75rem; cursor:pointer; white-space:nowrap;
+  }
+  thead th.active{ color:var(--ink); }
+  thead th[data-sort]::after{ content:''; display:inline-block; width:0.6em; }
+  thead th.sort-asc::after{ content:'\2191'; margin-left:2px; }
+  thead th.sort-desc::after{ content:'\2193'; margin-left:2px; }
+  tbody tr{ border-bottom:1px solid var(--border); cursor:pointer; }
+  tbody tr:nth-child(even){ background:rgba(224,224,221,0.35); }
+  tbody tr:hover{ background:var(--surface-3); }
+  tbody td{ padding:0.65rem 0.75rem; vertical-align:middle; }
+  td.num{ font-family:'IBM Plex Mono', monospace; }
+  .round-name{ font-family:'Bodoni Moda', serif; font-weight:600; font-size:14.5px; }
+  .round-sub{ color:var(--ink-soft); font-size:12px; }
+  .tee-chip{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:11.5px;
+    background:var(--surface-3); border:1px solid var(--border-strong); border-radius:4px; padding:1px 7px;
+  }
+  .seal{
+    display:inline-flex; align-items:center; gap:5px; font-family:'Inter', sans-serif; font-weight:600;
+    font-size:11px; letter-spacing:0.02em; padding:3px 9px 3px 7px; border-radius:999px;
+  }
+  .seal::before{ content:''; width:6px; height:6px; border-radius:50%; display:inline-block; }
+  .seal.complete{ background:var(--success-bg); color:var(--success); }
+  .seal.complete::before{ background:var(--success); }
+  .seal.pending{ background:var(--pending-bg); color:var(--pending); }
+  .seal.pending::before{ background:var(--pending); }
+
+  .rowactions{ display:flex; gap:6px; opacity:0; transition:opacity 0.1s; }
+  tbody tr:hover .rowactions{ opacity:1; }
+  .iconbtn{
+    border:1px solid var(--border-strong); background:#fff; border-radius:4px; width:26px; height:26px;
+    display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft); font-size:13px;
+  }
+  .iconbtn:hover{ border-color:var(--ink); color:var(--ink); }
+  .iconbtn.del:hover{ border-color:var(--danger); color:var(--danger); }
+
+  .empty{ text-align:center; padding:3rem 1rem; color:var(--ink-soft); }
+  .empty .big{ font-family:'Bodoni Moda', serif; font-size:1.3rem; color:var(--ink); margin-bottom:0.3rem; }
+
+  .pager{ display:flex; justify-content:space-between; align-items:center; padding:0.9rem 1.25rem; font-size:12.5px; color:var(--ink-soft); border-top:1px solid var(--border); background:var(--surface-2); }
+  .pager button{ background:none; border:none; color:var(--ink); cursor:pointer; font-weight:600; font-size:13px; }
+  .pager button:disabled{ color:#C6C6C2; cursor:default; }
+
+  .overlay{ position:fixed; inset:0; background:rgba(9,9,10,0.72); display:none; align-items:center; justify-content:center; padding:1.5rem; z-index:50; }
+  .overlay.open{ display:flex; }
+  .modal{
+    background:var(--surface); border-radius:0.75rem; max-width:640px; width:100%;
+    max-height:88vh; overflow-y:auto; padding:0; box-shadow:var(--shadow-md); border:1px solid var(--border);
+  }
+  .modal-head{ padding:1.25rem 1.6rem; border-bottom:1px solid var(--border); background:var(--surface-2); }
+  .modal-body{ padding:1.4rem 1.6rem; }
+  .modal h2{ font-family:'Bodoni Moda', serif; font-size:1.3rem; margin:0; }
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0.8rem 1rem; }
+  .form-grid .full{ grid-column:1 / -1; }
+  .field label{ display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft); margin-bottom:0.3rem; }
+  .field input, .field select, .field textarea{
+    width:100%; padding:0.5rem 0.6rem; border:1px solid var(--border-strong); border-radius:var(--radius);
+    font-family:'Inter', sans-serif; font-size:13.5px; background:#fff; color:var(--ink);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--ink); box-shadow:0 0 0 3px rgba(24,24,26,0.10); }
+  .field textarea{ resize:vertical; min-height:56px; }
+  .field input.input-error{ border-color:var(--danger); }
+  .field-error-msg{ display:block; color:var(--danger); font-size:11.5px; margin-top:0.3rem; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.3rem; }
+  .modal-close{ position:absolute; top:1.1rem; right:1.2rem; background:none; border:none; font-size:1.3rem; color:var(--ink-soft); cursor:pointer; }
+  .modal-wrap{ position:relative; }
+
+  .confirm{ text-align:center; }
+  .confirm p{ margin:0.8rem 0 1.3rem; color:var(--ink-soft); font-size:14px; }
+
+  .site-footer{
+    text-align:center; font-family:'Bodoni Moda', serif; font-style:italic; font-weight:500;
+    font-size:0.95rem; letter-spacing:0.01em; color:var(--silver); padding:0.5rem 1.5rem 2.5rem;
+  }
+
+  @media (max-width: 640px){
+    .stats{ grid-template-columns:repeat(2, 1fr); }
+    .form-grid{ grid-template-columns:1fr; }
+    table, thead, tbody, tr, th, td { display:block; }
+    thead{ display:none; }
+    tbody tr{ padding:0.6rem 0; border-bottom:1px solid var(--border); }
+    tbody td{ padding:0.15rem 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="navbar-inner">
+    <div class="brand">
+      <a href="index.html" title="Back to hub">
+        <svg viewBox="0 0 24 24" fill="none">
+          <defs>
+            <linearGradient id="markGrad" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#EDEDEF"/>
+              <stop offset="1" stop-color="#88888E"/>
+            </linearGradient>
+          </defs>
+          <path d="M6 20V4" stroke="url(#markGrad)" stroke-width="1.1" stroke-linecap="round"/>
+          <path d="M6 4l11 3.2L6 10.4" stroke="url(#markGrad)" stroke-width="1.1" stroke-linejoin="round"/>
+        </svg>
+        <h1 class="wordmark"><span class="wm-eyebrow">BIRDIE</span><span class="wm-rule"></span><span class="wm-serif">Ledger</span></h1>
+      </a>
+    </div>
+    <div style="display:flex; align-items:center; gap:0.9rem;">
+      <p class="subhead" id="round-count-sub">Loading your rounds&hellip;</p>
+      <button class="hub-link" id="signout-btn" style="display:none; cursor:pointer; background:none; font-family:inherit;">Sign out</button>
+      <a class="hub-link" href="index.html">&larr; Hub</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="config-banner">
+    <strong>Firebase isn't connected yet.</strong> Open this file in a text editor, find the
+    <code>firebaseConfig</code> object near the bottom of the file, and paste in your project's
+    web app config from the Firebase console. Until then this is showing an empty demo state &mdash;
+    nothing you add will be saved.
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="num" id="stat-total">&mdash;</span><span class="label">Rounds shown</span></div>
+    <div class="stat"><span class="num" id="stat-scheduled">&mdash;</span><span class="label">Scheduled</span></div>
+    <div class="stat"><span class="num" id="stat-played">&mdash;</span><span class="label">Played</span></div>
+    <div class="stat"><span class="num" id="stat-avgscore">&mdash;</span><span class="label">Avg. score</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="toolbar">
+        <input type="search" id="search" placeholder="Search course, state, co-players, comments&hellip;">
+        <div class="chip-group" id="status-filters">
+          <span class="chip active" data-status="All">All</span>
+          <span class="chip" data-status="Pending">Scheduled</span>
+          <span class="chip" data-status="Complete">Played</span>
+        </div>
+        <select class="sortsel" id="course-filter">
+          <option value="All">All courses</option>
+        </select>
+        <select class="sortsel" id="weather-filter">
+          <option value="All">All weather</option>
+          <option value="Cold">Cold</option>
+          <option value="Cool">Cool</option>
+          <option value="Nice">Nice</option>
+          <option value="Warm">Warm</option>
+          <option value="Hot">Hot</option>
+        </select>
+        <select class="sortsel" id="sort-select">
+          <option value="DatePlayed-desc">Newest round</option>
+          <option value="DatePlayed-asc">Oldest round</option>
+          <option value="Score-asc">Score (low&rarr;high)</option>
+          <option value="Score-desc">Score (high&rarr;low)</option>
+          <option value="Course-asc">Course A&ndash;Z</option>
+        </select>
+        <button class="btn ghost" id="clear-filters-btn">Clear filters</button>
+        <button class="btn ghost" id="export-btn">Export to Excel</button>
+        <button class="btn" id="add-btn">+ Add round</button>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div id="table-region">
+        <table id="round-table">
+          <thead>
+            <tr>
+              <th data-sort="Course">Course</th>
+              <th data-sort="DatePlayed">Date</th>
+              <th>Weather</th>
+              <th data-sort="Score">Score</th>
+              <th>Trophy</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="round-tbody"></tbody>
+        </table>
+        <div class="empty" id="empty-state" style="display:none;">
+          <p class="big">No rounds match this search.</p>
+          <p>Try clearing the filters, or add a new round to start the ledger.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pager">
+      <span id="pager-label">&nbsp;</span>
+      <span>
+        <button id="prev-page">&larr; Prev</button>
+        &nbsp;&nbsp;
+        <button id="next-page">Next &rarr;</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="form-overlay">
+  <div class="modal modal-wrap">
+    <button class="modal-close" id="form-close" aria-label="Close">&times;</button>
+    <div class="modal-head"><h2 id="form-title">Add round</h2></div>
+    <div class="modal-body">
+    <form id="round-form">
+      <div class="form-grid">
+        <div class="field"><label>Date played</label><input name="DatePlayed" type="date"></div>
+        <div class="field"><label>Golf course name</label><input name="Course" placeholder="e.g. Pebble Beach Golf Links"></div>
+        <div class="field"><label>State</label><input name="State" placeholder="e.g. CA"></div>
+        <div class="field"><label>Weather</label>
+          <select name="Weather">
+            <option value=""></option>
+            <option value="Cold">Cold</option>
+            <option value="Cool">Cool</option>
+            <option value="Nice">Nice</option>
+            <option value="Warm">Warm</option>
+            <option value="Hot">Hot</option>
+          </select>
+        </div>
+        <div class="field"><label>Co-players</label><input name="CoPlayers"></div>
+        <div class="field"><label>Front nine score</label><input id="front9-input" name="Front9" type="number" min="9" max="100"></div>
+        <div class="field"><label>Back nine score</label><input id="back9-input" name="Back9" type="number" min="9" max="100"></div>
+        <div class="field"><label>Total score</label><input id="total-score-input" name="Score" type="number" readonly></div>
+        <div class="field"><label>Fairways hit</label><input name="FairwaysHit" placeholder="e.g. 9/14"></div>
+        <div class="field"><label>Greens in regulation</label><input name="GIR" placeholder="e.g. 7/18"></div>
+        <div class="field"><label>Putts</label><input name="Putts" type="number" min="0" max="80"></div>
+        <div class="field"><label>3-putts</label><input name="ThreePutts" type="number" min="0" max="18"></div>
+        <div class="field"><label>Birdies</label><input name="Birdies" type="number" min="0" max="18"></div>
+        <div class="field"><label>Pars</label><input name="Pars" type="number" min="0" max="18"></div>
+        <div class="field"><label>Bogeys</label><input name="Bogeys" type="number" min="0" max="18"></div>
+        <div class="field"><label>Double bogeys+</label><input name="DoubleBogeysPlus" type="number" min="0" max="18"></div>
+        <div class="field"><label>Penalty strokes</label>
+          <select name="PenaltyStrokes">
+            <option value=""></option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4+">4+</option>
+          </select>
+        </div>
+        <div class="field"><label>Penalty details</label><input name="PenaltyDetails" placeholder="e.g. Water on 14, OB on 7"></div>
+        <div class="field"><label>Handicap index</label><input name="HandicapIndex" type="number" step="0.1" min="0" max="54"></div>
+        <div class="field"><label>Trophy</label>
+          <select name="Trophy">
+            <option value=""></option>
+            <option value="Win">Win</option>
+            <option value="Lose">Lose</option>
+            <option value="Null">Null</option>
+          </select>
+        </div>
+        <div class="field full"><label>Comments</label><textarea name="Comments"></textarea></div>
+        <div class="field full"><label>Status</label>
+          <select name="Status">
+            <option value="Pending">Scheduled</option>
+            <option value="Complete">Played</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="form-cancel">Cancel</button>
+        <button type="submit" class="btn" id="form-save">Save round</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="confirm-overlay">
+  <div class="modal modal-wrap" style="max-width:380px;">
+    <div class="modal-body">
+    <div class="confirm">
+      <h2>Remove this round?</h2>
+      <p id="confirm-text">This can't be undone.</p>
+      <div class="modal-actions" style="justify-content:center;">
+        <button class="btn ghost" id="confirm-cancel">Cancel</button>
+        <button class="btn danger" id="confirm-delete">Delete</button>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="login-overlay">
+  <div class="modal modal-wrap" style="max-width:380px;">
+    <div class="modal-body">
+    <div class="confirm">
+      <h2>Sign in to The Birdie Ledger</h2>
+      <p>Sign in with Google to see your own rounds. Each account gets its own private log.</p>
+      <div class="modal-actions" style="justify-content:center;">
+        <button class="btn" id="google-signin-btn">Sign in with Google</button>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">Don't Panic! &#128044;</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import {
+  getFirestore, collection, onSnapshot, doc, query, where,
+  setDoc, deleteDoc, addDoc
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+
+// ----------------------------------------------------------------------
+// 1. FIREBASE SETUP -- reuses the same Firebase project as The Pour
+//    Ledger, just a different Firestore collection ("rounds"), so there
+//    was no need to spin up a second Firebase project for this.
+// ----------------------------------------------------------------------
+const firebaseConfig = {
+  apiKey: "AIzaSyCQf87JX44sQLLS09nEyHzPM_-pX9h4H7A",
+  authDomain: "lifeledger-clone.firebaseapp.com",
+  projectId: "lifeledger-clone",
+  storageBucket: "lifeledger-clone.firebasestorage.app",
+  messagingSenderId: "619592204709",
+  appId: "1:619592204709:web:d8e4532bebd749ec3c684c"
+};
+
+const isConfigured = firebaseConfig.apiKey !== "YOUR_API_KEY";
+let db = null;
+let auth = null;
+let currentUser = null;
+let unsubscribeRounds = null;
+let rounds = [];
+
+const loginOverlay = document.getElementById("login-overlay");
+const signoutBtn = document.getElementById("signout-btn");
+
+if (isConfigured) {
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  auth = getAuth(app);
+
+  document.getElementById("google-signin-btn").addEventListener("click", async () => {
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (err) {
+      console.error(err);
+      alert("Couldn't sign in. Check the browser console for details.");
+    }
+  });
+  signoutBtn.addEventListener("click", () => signOut(auth));
+
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    if (unsubscribeRounds) { unsubscribeRounds(); unsubscribeRounds = null; }
+
+    if (user) {
+      loginOverlay.classList.remove("open");
+      signoutBtn.style.display = "";
+      signoutBtn.title = user.email || "";
+      const roundsQuery = query(collection(db, "rounds"), where("ownerId", "==", user.uid));
+      unsubscribeRounds = onSnapshot(roundsQuery, (snap) => {
+        rounds = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
+        render();
+      }, (err) => {
+        console.error(err);
+        document.getElementById("config-banner").style.display = "block";
+        document.getElementById("config-banner").innerHTML =
+          "<strong>Couldn't reach Firestore.</strong> Check that Firestore is enabled in your Firebase project and that your security rules allow read/write, then reload this page.";
+      });
+    } else {
+      rounds = [];
+      signoutBtn.style.display = "none";
+      loginOverlay.classList.add("open");
+      render();
+    }
+  });
+} else {
+  document.getElementById("config-banner").style.display = "block";
+}
+
+// ----------------------------------------------------------------------
+// 2. STATE
+// ----------------------------------------------------------------------
+let searchTerm = "";
+let statusFilter = "All";
+let courseFilter = "All";
+let weatherFilter = "All";
+let sortKey = "DatePlayed";
+let sortDir = "desc";
+let page = 0;
+const PAGE_SIZE = 40;
+let editingId = null;
+let pendingDeleteId = null;
+let knownCourses = [];
+
+const searchableFields = ["Course","State","CoPlayers","Weather","Comments","PenaltyDetails"];
+
+function refreshFilterOptions() {
+  const courses = Array.from(new Set(rounds.map(r => r.Course).filter(Boolean))).sort();
+
+  if (courses.join("|") !== knownCourses.join("|")) {
+    knownCourses = courses;
+    const sel = document.getElementById("course-filter");
+    const current = sel.value;
+    sel.innerHTML = '<option value="All">All courses</option>' +
+      courses.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+    sel.value = courses.includes(current) ? current : "All";
+    courseFilter = sel.value;
+  }
+}
+
+function filteredSorted() {
+  let list = rounds.slice();
+  if (statusFilter !== "All") {
+    list = list.filter(r => (r.Status || "Pending") === statusFilter);
+  }
+  if (courseFilter !== "All") {
+    list = list.filter(r => r.Course === courseFilter);
+  }
+  if (weatherFilter !== "All") {
+    list = list.filter(r => r.Weather === weatherFilter);
+  }
+  if (searchTerm.trim()) {
+    const q = searchTerm.trim().toLowerCase();
+    list = list.filter(r => searchableFields.some(f => (r[f] || "").toString().toLowerCase().includes(q)));
+  }
+  list.sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (sortKey === "Score") {
+      av = Number(av) || 0; bv = Number(bv) || 0;
+    } else {
+      av = (av || "").toString(); bv = (bv || "").toString();
+    }
+    if (av < bv) return sortDir === "asc" ? -1 : 1;
+    if (av > bv) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+  return list;
+}
+
+function render() {
+  refreshFilterOptions();
+  const list = filteredSorted();
+  const total = list.length;
+  const scheduled = list.filter(r => (r.Status || "Pending") === "Pending").length;
+  const played = list.filter(r => r.Status === "Complete").length;
+  const scored = list.map(r => Number(r.Score)).filter(n => !isNaN(n) && n > 0);
+  const avgScore = scored.length ? Math.round(scored.reduce((a,b)=>a+b,0) / scored.length) : "\u2014";
+
+  document.getElementById("stat-total").textContent = total.toLocaleString();
+  document.getElementById("stat-scheduled").textContent = scheduled.toLocaleString();
+  document.getElementById("stat-played").textContent = played.toLocaleString();
+  document.getElementById("stat-avgscore").textContent = avgScore;
+  document.getElementById("round-count-sub").textContent =
+    total === rounds.length
+      ? (total ? `${total.toLocaleString()} rounds logged, ${scheduled.toLocaleString()} scheduled` : "No rounds logged yet")
+      : `${total.toLocaleString()} of ${rounds.length.toLocaleString()} rounds shown, ${scheduled.toLocaleString()} scheduled`;
+
+  const tbody = document.getElementById("round-tbody");
+  const emptyState = document.getElementById("empty-state");
+  const table = document.getElementById("round-table");
+
+  if (!list.length) {
+    tbody.innerHTML = "";
+    table.style.display = "none";
+    emptyState.style.display = "block";
+    document.getElementById("pager-label").textContent = "";
+    document.getElementById("prev-page").disabled = true;
+    document.getElementById("next-page").disabled = true;
+    return;
+  }
+  table.style.display = "";
+  emptyState.style.display = "none";
+
+  document.querySelectorAll("#round-table thead th[data-sort]").forEach(th => {
+    th.classList.remove("active", "sort-asc", "sort-desc");
+    if (th.dataset.sort === sortKey) {
+      th.classList.add("active", sortDir === "asc" ? "sort-asc" : "sort-desc");
+    }
+  });
+
+  const maxPage = Math.max(0, Math.ceil(list.length / PAGE_SIZE) - 1);
+  if (page > maxPage) page = maxPage;
+  const start = page * PAGE_SIZE;
+  const pageItems = list.slice(start, start + PAGE_SIZE);
+
+  tbody.innerHTML = pageItems.map(r => {
+    const status = r.Status || "Pending";
+    const sealClass = status === "Complete" ? "complete" : "pending";
+    const sealLabel = status === "Complete" ? "Played" : "Scheduled";
+    const score = r.Score != null && r.Score !== "" ? r.Score : "\u2014";
+    return `
+      <tr data-id="${r._id}">
+        <td>
+          <div class="round-name">${escapeHtml(r.Course || "Unnamed course")}</div>
+          <div class="round-sub">${escapeHtml(r.State || "")}</div>
+        </td>
+        <td>${escapeHtml(r.DatePlayed || "\u2014")}</td>
+        <td>${escapeHtml(r.Weather || "\u2014")}</td>
+        <td class="num">${score}</td>
+        <td>${escapeHtml(r.Trophy || "\u2014")}</td>
+        <td><span class="seal ${sealClass}">${sealLabel}</span></td>
+        <td>
+          <div class="rowactions">
+            <span class="iconbtn edit" title="Edit">&#9998;</span>
+            <span class="iconbtn del" title="Delete">&times;</span>
+          </div>
+        </td>
+      </tr>`;
+  }).join("");
+
+  document.getElementById("pager-label").textContent =
+    `Showing ${start + 1}\u2013${Math.min(start + PAGE_SIZE, list.length)} of ${list.length.toLocaleString()}`;
+  document.getElementById("prev-page").disabled = page === 0;
+  document.getElementById("next-page").disabled = page >= maxPage;
+
+  tbody.querySelectorAll("tr").forEach(tr => {
+    const id = tr.dataset.id;
+    tr.querySelector(".edit").addEventListener("click", (e) => { e.stopPropagation(); openEdit(id); });
+    tr.querySelector(".del").addEventListener("click", (e) => { e.stopPropagation(); openConfirm(id); });
+    tr.addEventListener("click", () => openEdit(id));
+  });
+}
+
+function escapeHtml(v) {
+  return String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+// ----------------------------------------------------------------------
+// 3. TOOLBAR EVENTS
+// ----------------------------------------------------------------------
+document.getElementById("search").addEventListener("input", (e) => {
+  searchTerm = e.target.value; page = 0; render();
+});
+document.querySelectorAll("#status-filters .chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    document.querySelectorAll("#status-filters .chip").forEach(c => c.classList.remove("active"));
+    chip.classList.add("active");
+    statusFilter = chip.dataset.status;
+    page = 0; render();
+  });
+});
+document.getElementById("sort-select").addEventListener("change", (e) => {
+  const [key, dir] = e.target.value.split("-");
+  sortKey = key; sortDir = dir; render();
+});
+document.getElementById("course-filter").addEventListener("change", (e) => {
+  courseFilter = e.target.value; page = 0; render();
+});
+document.getElementById("weather-filter").addEventListener("change", (e) => {
+  weatherFilter = e.target.value; page = 0; render();
+});
+document.getElementById("clear-filters-btn").addEventListener("click", () => {
+  searchTerm = "";
+  statusFilter = "All";
+  courseFilter = "All";
+  weatherFilter = "All";
+  sortKey = "DatePlayed";
+  sortDir = "desc";
+  page = 0;
+
+  document.getElementById("search").value = "";
+  document.querySelectorAll("#status-filters .chip").forEach(c => c.classList.remove("active"));
+  document.querySelector('#status-filters .chip[data-status="All"]').classList.add("active");
+  document.getElementById("course-filter").value = "All";
+  document.getElementById("weather-filter").value = "All";
+  document.getElementById("sort-select").value = "DatePlayed-desc";
+
+  render();
+});
+document.querySelectorAll("#round-table thead th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (sortKey === key) {
+      sortDir = sortDir === "asc" ? "desc" : "asc";
+    } else {
+      sortKey = key;
+      sortDir = key === "Course" ? "asc" : "desc";
+    }
+    const matchingOption = `${sortKey}-${sortDir}`;
+    const sortSelect = document.getElementById("sort-select");
+    if (Array.from(sortSelect.options).some(o => o.value === matchingOption)) {
+      sortSelect.value = matchingOption;
+    }
+    render();
+  });
+});
+document.getElementById("prev-page").addEventListener("click", () => { page = Math.max(0, page - 1); render(); });
+document.getElementById("next-page").addEventListener("click", () => { page += 1; render(); });
+
+document.getElementById("export-btn").addEventListener("click", () => {
+  if (typeof XLSX === "undefined") {
+    alert("The Excel export library hasn't finished loading yet. Give it a second and try again.");
+    return;
+  }
+  const list = filteredSorted();
+  if (!list.length) {
+    alert("No rounds match the current search and filters, so there's nothing to export.");
+    return;
+  }
+  const rows = list.map(r => ({
+    "Date Played": r.DatePlayed || "",
+    "Course": r.Course || "",
+    "State": r.State || "",
+    "Weather": r.Weather || "",
+    "Co-Players": r.CoPlayers || "",
+    "Front 9": r.Front9 || "",
+    "Back 9": r.Back9 || "",
+    "Score": r.Score != null && r.Score !== "" ? Number(r.Score) : "",
+    "Fairways Hit": r.FairwaysHit || "",
+    "Greens in Regulation": r.GIR || "",
+    "Putts": r.Putts || "",
+    "3-Putts": r.ThreePutts || "",
+    "Birdies": r.Birdies || "",
+    "Pars": r.Pars || "",
+    "Bogeys": r.Bogeys || "",
+    "Double Bogeys+": r.DoubleBogeysPlus || "",
+    "Penalty Strokes": r.PenaltyStrokes || "",
+    "Penalty Details": r.PenaltyDetails || "",
+    "Handicap Index": r.HandicapIndex || "",
+    "Trophy": r.Trophy || "",
+    "Comments": r.Comments || "",
+    "Status": r.Status || "Pending"
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = Object.keys(rows[0]).map(k => ({ wch: Math.min(Math.max(k.length, 12), 40) }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Birdie Ledger");
+  const stamp = new Date().toISOString().slice(0, 10);
+  XLSX.writeFile(wb, `birdie-ledger-export-${stamp}.xlsx`);
+});
+
+// ----------------------------------------------------------------------
+// 4. ADD / EDIT MODAL
+// ----------------------------------------------------------------------
+const formOverlay = document.getElementById("form-overlay");
+const roundForm = document.getElementById("round-form");
+const front9Input = document.getElementById("front9-input");
+const back9Input = document.getElementById("back9-input");
+const totalScoreInput = document.getElementById("total-score-input");
+
+document.getElementById("add-btn").addEventListener("click", () => openAdd());
+document.getElementById("form-close").addEventListener("click", closeForm);
+document.getElementById("form-cancel").addEventListener("click", closeForm);
+formOverlay.addEventListener("click", (e) => { if (e.target === formOverlay) closeForm(); });
+
+function updateTotalScore() {
+  const f = front9Input.value;
+  const b = back9Input.value;
+  totalScoreInput.value = (f !== "" && b !== "") ? Number(f) + Number(b) : "";
+}
+front9Input.addEventListener("input", updateTotalScore);
+back9Input.addEventListener("input", updateTotalScore);
+
+function openAdd() {
+  editingId = null;
+  document.getElementById("form-title").textContent = "Add round";
+  roundForm.reset();
+  roundForm.querySelector('[name="Status"]').value = "Pending";
+  updateTotalScore();
+  formOverlay.classList.add("open");
+}
+
+function openEdit(id) {
+  const r = rounds.find(x => x._id === id);
+  if (!r) return;
+  editingId = id;
+  document.getElementById("form-title").textContent = `Edit ${r.Course || "round"}`;
+  roundForm.reset();
+  Array.from(roundForm.elements).forEach(el => {
+    if (el.name && r[el.name] != null) el.value = r[el.name];
+  });
+  updateTotalScore();
+  formOverlay.classList.add("open");
+}
+
+function closeForm() {
+  formOverlay.classList.remove("open");
+}
+
+roundForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!isConfigured) {
+    alert("Add your Firebase config at the bottom of this file before saving rounds.");
+    return;
+  }
+  if (!currentUser) {
+    alert("Please sign in with Google before saving rounds.");
+    return;
+  }
+  const data = {};
+  Array.from(roundForm.elements).forEach(el => {
+    if (!el.name) return;
+    let v = el.value;
+    if (el.type === "number" && v !== "") v = Number(v);
+    if (v !== "") data[el.name] = v;
+  });
+  try {
+    if (editingId) {
+      await setDoc(doc(db, "rounds", editingId), data, { merge: true });
+    } else {
+      data.ownerId = currentUser.uid;
+      await addDoc(collection(db, "rounds"), data);
+    }
+    closeForm();
+  } catch (err) {
+    console.error(err);
+    alert("Couldn't save that round. Check the browser console for details.");
+  }
+});
+
+// ----------------------------------------------------------------------
+// 5. DELETE CONFIRM
+// ----------------------------------------------------------------------
+const confirmOverlay = document.getElementById("confirm-overlay");
+document.getElementById("confirm-cancel").addEventListener("click", () => confirmOverlay.classList.remove("open"));
+confirmOverlay.addEventListener("click", (e) => { if (e.target === confirmOverlay) confirmOverlay.classList.remove("open"); });
+
+function openConfirm(id) {
+  const r = rounds.find(x => x._id === id);
+  pendingDeleteId = id;
+  document.getElementById("confirm-text").textContent =
+    r ? `"${r.Course || "This round"}" will be removed from the ledger for good.` : "This can't be undone.";
+  confirmOverlay.classList.add("open");
+}
+
+document.getElementById("confirm-delete").addEventListener("click", async () => {
+  if (!pendingDeleteId) return;
+  try {
+    await deleteDoc(doc(db, "rounds", pendingDeleteId));
+  } catch (err) {
+    console.error(err);
+    alert("Couldn't delete that round. Check the browser console for details.");
+  }
+  confirmOverlay.classList.remove("open");
+});
+
+render();
+</script>
+</body>
+</html>
