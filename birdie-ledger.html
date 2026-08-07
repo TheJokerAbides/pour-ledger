@@ -355,6 +355,8 @@
       <div class="form-grid">
         <div class="field"><label>Date played</label><input name="DatePlayed" type="date"></div>
         <div class="field"><label>Golf course name</label><input name="Course" placeholder="e.g. Pebble Beach Golf Links"></div>
+        <div class="field"><label>Yardage</label><input name="Yardage" type="number" min="0" max="9000"></div>
+        <div class="field"><label>Slope</label><input name="Slope" type="number" min="55" max="155"></div>
         <div class="field"><label>State</label><input name="State" placeholder="e.g. CA"></div>
         <div class="field"><label>Weather</label>
           <select name="Weather">
@@ -747,6 +749,8 @@ document.getElementById("export-btn").addEventListener("click", () => {
   const rows = list.map(r => ({
     "Date Played": r.DatePlayed || "",
     "Course": r.Course || "",
+    "Yardage": r.Yardage || "",
+    "Slope": r.Slope || "",
     "State": r.State || "",
     "Weather": r.Weather || "",
     "Co-Players": r.CoPlayers || "",
