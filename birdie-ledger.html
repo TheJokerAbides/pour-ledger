@@ -376,6 +376,7 @@
         <div class="field"><label>Greens in regulation</label><input name="GIR" placeholder="e.g. 7/18"></div>
         <div class="field"><label>Putts</label><input name="Putts" type="number" min="0" max="80"></div>
         <div class="field"><label>3-putts</label><input name="ThreePutts" type="number" min="0" max="18"></div>
+        <div class="field"><label>Eagles</label><input name="Eagles" type="number" min="0" max="18"></div>
         <div class="field"><label>Birdies</label><input name="Birdies" type="number" min="0" max="18"></div>
         <div class="field"><label>Pars</label><input name="Pars" type="number" min="0" max="18"></div>
         <div class="field"><label>Bogeys</label><input name="Bogeys" type="number" min="0" max="18"></div>
@@ -761,6 +762,7 @@ document.getElementById("export-btn").addEventListener("click", () => {
     "Greens in Regulation": r.GIR || "",
     "Putts": r.Putts || "",
     "3-Putts": r.ThreePutts || "",
+    "Eagles": r.Eagles || "",
     "Birdies": r.Birdies || "",
     "Pars": r.Pars || "",
     "Bogeys": r.Bogeys || "",
